@@ -1,0 +1,6 @@
+[report]
+include =
+    src/bghw/*
+omit =
+    */test*
+    */upgrades/*
