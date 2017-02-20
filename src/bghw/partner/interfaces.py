@@ -9,6 +9,7 @@ from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 from plone.app.textfield import RichText
 from collective.z3cform.datagridfield import DictRow, DataGridFieldFactory
+from z3c.form.browser.checkbox import CheckBoxFieldWidget
 
 class IBghwPartnerLayer(IDefaultBrowserLayer):
     """Marker interface that defines a browser layer."""
@@ -207,6 +208,7 @@ class IPartner(Interface):
         required=True,
     )
 
+    form.widget(art=CheckBoxFieldWidget)
     art = schema.List(
         title=_(u'Art des Netzwerkpartners'),
         value_type = schema.Choice(vocabulary=spezialgebiete),
