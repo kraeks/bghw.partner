@@ -53,18 +53,15 @@ umkreise = SimpleVocabulary((
     SimpleTerm(150,150,u'150 km')))
 
 standorte = SimpleVocabulary((
-    SimpleTerm(u'berlin', u'berlin', u'Berlin'),
-    SimpleTerm(u'bonn', u'bonn', u'Bonn'),
-    SimpleTerm(u'mannheim', u'mannheim', u'Mannheim')))
+    SimpleTerm(u'', u'', u'Auswahl'),
+    SimpleTerm(u'rdost', u'rdost', u'RD Ost'),
+    SimpleTerm(u'rdsuedost', u'rdsuedost', u'RD Südost'),
+    SimpleTerm(u'rdsuedwest', u'rdsuedwest', u'RD Südwest'),
+    SimpleTerm(u'rdwest', u'rdwest', u'RD West'),
+    SimpleTerm(u'rdnord', u'rdnord', u'RD Nord')))
 
 spezialgebiete = SimpleVocabulary((
-    SimpleTerm(u'rehaplan', u'rehaplan', u'Reha-Plan Sprechstunde'),
-    SimpleTerm(u'schuhsprechstunde', u'schuhsprechstunde', u'Schuhsprechstunde'),
-    SimpleTerm(u'prothesensprechstunde', u'prothesensprechstunde', u'Prothesensprechstunde'),
-    SimpleTerm(u'handkompetenzzentrum', u'handkompetenzzentrum', u'Hand-Kompetenzzentrum'),
-    SimpleTerm(u'heilverfahrenskontrollen', u'heilverfahrenskontrollen', u'Ärzte und Kliniken für Heilverfahrenskontrollen')))
-
-spezialgebiete = SimpleVocabulary((
+    SimpleTerm(u'', u'', u'Auswahl'),
     SimpleTerm(u'rehaplan', u'rehaplan', u'Reha-Plan Sprechstunde'),
     SimpleTerm(u'schuhsprechstunde', u'schuhsprechstunde', u'Schuhsprechstunde'),
     SimpleTerm(u'prothesensprechstunde', u'prothesensprechstunde', u'Prothesensprechstunde'),
