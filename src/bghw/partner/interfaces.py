@@ -64,6 +64,26 @@ spezialgebiete = SimpleVocabulary((
     SimpleTerm(u'handkompetenzzentrum', u'handkompetenzzentrum', u'Hand-Kompetenzzentrum'),
     SimpleTerm(u'heilverfahrenskontrollen', u'heilverfahrenskontrollen', u'Ärzte und Kliniken für Heilverfahrenskontrollen')))
 
+spezialgebiete = SimpleVocabulary((
+    SimpleTerm(u'rehaplan', u'rehaplan', u'Reha-Plan Sprechstunde'),
+    SimpleTerm(u'schuhsprechstunde', u'schuhsprechstunde', u'Schuhsprechstunde'),
+    SimpleTerm(u'prothesensprechstunde', u'prothesensprechstunde', u'Prothesensprechstunde'),
+    SimpleTerm(u'handkompetenzzentrum', u'handkompetenzzentrum', u'Hand-Kompetenzzentrum'),
+    SimpleTerm(u'psycheaertzlich', u'psycheartzlich', u'BGU / SAV-Zentrum Psyche ärztlich'),
+    SimpleTerm(u'psychetherapeutisch', u'psychetherapeutisch', u'Psyche therapeutisch'),
+    SimpleTerm(u'bgsweap', u'bgsweap', u'BGSW / EAP'),
+    SimpleTerm(u'schmerz', u'schmerz', u'Schmerz'),
+    SimpleTerm(u'beraterbghw', u'beraterbghw', u'ärztliche Berater/innen der BGHW'),
+    SimpleTerm(u'heilverfahrenskontrollen', u'heilverfahrenskontrollen', u'Ärzte und Kliniken für Heilverfahrenskontrollen'),
+    SimpleTerm(u'assessmentverfahren', u'assessmentverfahren', u'Assessmentverfahren zur Teilhabe am Arbeitsleben'),
+    SimpleTerm(u'berufsfindung', u'berufsfindung', u'Eignungsuntersuchung, Berufsfindung und Arbeitserprobung'),
+    SimpleTerm(u'teilhabeleistung', u'teilhabeleistung', u'Einrichtungen zur Durchführung qualifizierter Teilhabeleistungen'),
+    SimpleTerm(u'privarbeitsvermittler', u'privarbeitsvermittler', u'Private Arbeitsvermittler'),
+    SimpleTerm(u'kfzhilfe', u'kfzhilfe', u'Leistungserbringer im Rahmen der KFZ-Hilfe'),
+    SimpleTerm(u'pflegeanbieter', u'pflegeanbieter', u'Pflegeanbieter'),
+    SimpleTerm(u'pflegeeinrichtung', u'pflegeeinrichtung', u'Pflegeeinrichtung, SHT und Querschnitt'),
+    SimpleTerm(u'neurologischereha', u'neurologischereha', u'neurologische Rehabilitation'),
+    SimpleTerm(u'wohnungshilfe', u'wohnungshilfe', u'Wohnungshilfe')))
 
 class IPartnerSearch(Interface):
 
