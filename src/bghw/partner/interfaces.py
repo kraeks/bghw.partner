@@ -161,10 +161,10 @@ class IPartner(Interface):
         required=True,
     )
 
-    name = schema.TextLine(
-        title=_(u'Name/Institution'),
-        description=_(u'Hier kann ein alternativer Name für die Einzelansicht des\
-                      des Netzwerkpartners eingetragen werden.'),
+    description = schema.Text(
+        title=_(u'Beschreibung'),
+        description=_(u'Hier können Sie die Leistungen des Netzwerkpartners kurz\
+                      beschreiben, z.B.: Spezialist im Bereich Schmerztherapie'),
         required=False,
     )
 
@@ -173,14 +173,14 @@ class IPartner(Interface):
         required=False,
     )
 
-    plz = schema.TextLine(
-        title=_(u'Postleitzahl'),
-        required=True,
-    )
-
     strhnr = schema.TextLine(
         title=_(u'Straße und Hausnummer'),
         required=False,
+    )
+
+    plz = schema.TextLine(
+        title=_(u'Postleitzahl'),
+        required=True,
     )
 
     ort = schema.TextLine(
