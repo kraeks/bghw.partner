@@ -69,7 +69,6 @@ spezialgebiete = SimpleVocabulary((
     SimpleTerm(u'handkompetenzzentrum', u'handkompetenzzentrum', u'Hand-Kompetenzzentrum'),
     SimpleTerm(u'psycheaertzlich', u'psycheartzlich', u'BGU / SAV-Zentrum Psyche ärztlich'),
     SimpleTerm(u'psychetherapeutisch', u'psychetherapeutisch', u'Psyche therapeutisch'),
-    SimpleTerm(u'bgsweap', u'bgsweap', u'BGSW / EAP'),
     SimpleTerm(u'schmerz', u'schmerz', u'Schmerz'),
     SimpleTerm(u'beraterbghw', u'beraterbghw', u'ärztliche Berater/innen der BGHW'),
     SimpleTerm(u'heilverfahrenskontrollen', u'heilverfahrenskontrollen', u'Ärzte und Kliniken für Heilverfahrenskontrollen'),
@@ -198,6 +197,11 @@ class IPartner(Interface):
         required=True,
     )
 
+    mobil = schema.TextLine(
+        title=_(u'Mobiltelefon'),
+        required=False,
+    )
+
     telefax = schema.TextLine(
         title=_(u'Telefax'),
         required=False,
@@ -222,19 +226,10 @@ class IPartner(Interface):
         required=False,
     )
 
-    form.widget(termine=DataGridFieldFactory)
-    termine = schema.List(
-        title = u'Liste der Öffnungszeiten und/oder Gesprächstermine',
-        description = u"Bitte erstellen Sie hier eine Tabelle mit den Öffnungszeiten\
-                    und/oder Gesprächsterminen. Bei durchgehender Öffnung bearbeiten\
-                    sie bitte nur die den Zeitabschnitt 1",
-        value_type = DictRow(title=u'Termine', schema=IOeffnung),
+    oeffnungszeiten = schema.List(
+        title=u'Liste der Öffnungszeiten und/oder Gesprächstermine',
+        value_type = schema.TextLine(),
         required = False,
-    )
-
-    durchgehend = schema.Bool(
-        title = u'Tägliche und durchgehende Öffnung',
-        description = u'Bitte klicken Sie hier bei täglicher und durchgehender Öffnung',
     )
 
     bghwansprechpartner = schema.List(
@@ -248,7 +243,6 @@ class IPartner(Interface):
         title=_(u'Bemerkungen'),
         required=False,
     )
-
 
 
 class IPartnerOrdner(Interface):
