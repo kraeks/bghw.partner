@@ -3,4 +3,12 @@
  <index name="art" meta_type="KeywordIndex">
   <indexed_attr value="art"/>
  </index>
+ <index name="latitude" meta_type="FieldIndex">
+  <indexed_attr value="latitude"/>
+ </index>
+ <index name="longitude" meta_type="FieldIndex">
+  <indexed_attr value="longitude"/>
+ </index>
+ <column value="latitude"/>
+ <column value="longitude"/>
 </object>

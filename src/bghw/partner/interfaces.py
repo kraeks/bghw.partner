@@ -8,8 +8,12 @@ from plone.directives import form
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 from plone.app.textfield import RichText
+from plone.indexer import indexer
 from collective.z3cform.datagridfield import DictRow, DataGridFieldFactory
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
+from geopy.geocoders import Nominatim
+
+geolocator = Nominatim(user_agent="bghw.partner")
 
 class IBghwPartnerLayer(IDefaultBrowserLayer):
     """Marker interface that defines a browser layer."""
@@ -84,25 +88,15 @@ spezialgebiete = SimpleVocabulary((
 
 class IPartnerSearch(Interface):
 
-    ort = schema.TextLine(
-        title=_(u'Wohnort der versicherten Person'),
-        required=False
-    )
-
     plz = schema.TextLine(
         title=_(u'Postleitzahl der versicherten Person'),
-        required=False
-    )
-
-    name = schema.TextLine(
-        title=_(u'Name des Netzwerkpartners'),
-        required=False
+        required=True
     )
 
     art = schema.Choice(
         title=_(u'Art des Netzwerkpartners'),
         vocabulary=spezialgebiete,
-        required=False,
+        required=True,
     )
 
     umkreis = schema.Choice(
@@ -110,13 +104,6 @@ class IPartnerSearch(Interface):
         vocabulary=umkreise,
         required=False,
     )
-
-    bghw = schema.Choice(
-        title=_(u'Angabe zum BGHW-Standort'),
-        vocabulary=standorte,
-        required=False,
-    )
-
 
 class IOeffnung(Interface):
 
@@ -256,3 +243,28 @@ class IPartnerOrdner(Interface):
         title=_(u'Description'),
         required=False,
     )
+
+@indexer(IPartner)
+def latitudeIndexer(obj):
+    if obj.strhnr:
+        location = '%s, %s %s, Deutschland' %(obj.strhnr, obj.plz, obj.ort)
+    else:
+        location = '%s %s, Deutschland' %(obj.plz, obj.ort)
+    try:
+        latitude = geolocator.geocode(location).latitude
+    except:
+        latitude = ''
+    return latitude
+
+@indexer(IPartner)
+def longitudeIndexer(obj):
+    if obj.strhnr:
+        location = '%s, %s %s, Deutschland' %(obj.strhnr, obj.plz, obj.ort)
+    else:
+        location = '%s %s, Deutschland' %(obj.plz, obj.ort)
+    try:
+        longitude = geolocator.geocode(location).longitude
+    except:
+        longitude = ''
+    return longitude
+

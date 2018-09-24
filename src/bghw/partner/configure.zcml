@@ -36,4 +36,7 @@
       factory=".setuphandlers.HiddenProfiles"
       name="bghw.partner-hiddenprofiles" />
 
+  <adapter factory=".interfaces.latitudeIndexer" name="latitude" />
+  <adapter factory=".interfaces.longitudeIndexer" name="longitude" />
+
 </configure>
