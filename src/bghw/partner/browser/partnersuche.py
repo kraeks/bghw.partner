@@ -15,6 +15,8 @@ class PartnerSearch(api.Form):
     api.context(Interface)
     label = u'Suche in der Partnerdatenbank'
     fields = api.Fields(IPartnerSearch)
+    fields['plz'].htmlAttributes['maxlength'] = 5
+    fields['plz'].htmlAttributes['size'] = 6
 
     ignoreContent = False
 
@@ -38,7 +40,7 @@ class PartnerSearch(api.Form):
             location = (location.latitude, location.longitude)
             partner = (i.latitude, i.longitude)
             distance = great_circle(location, partner).km
-            if data.get('distance'):
+            if data.get('umkreis') != 'alle':
                 if distance <= data.get('umkreis'):
                     obj = i.getObject()
                     entry['title'] = obj.title

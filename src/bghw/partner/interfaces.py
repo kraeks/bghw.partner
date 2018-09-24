@@ -12,6 +12,18 @@ from plone.indexer import indexer
 from collective.z3cform.datagridfield import DictRow, DataGridFieldFactory
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from geopy.geocoders import Nominatim
+from uvc.validation import validatePLZ
+from zope.schema import ValidationError
+
+class keinPartner(ValidationError):
+    u""" Bitte wählen Sie die Art des Netzwerkpartners aus. """
+
+def validatePartner(value):
+    if value:
+        return True
+    raise keinPartner
+
+
 
 geolocator = Nominatim(user_agent="bghw.partner")
 
@@ -49,7 +61,7 @@ wochentage = SimpleVocabulary.fromItems((
     (u'Mo-So', 9)))
 
 umkreise = SimpleVocabulary((
-    SimpleTerm(0,0,u'Auswahl'),
+    SimpleTerm('alle','alle',u'alle anzeigen'),
     SimpleTerm(10,10,u'10 km'),
     SimpleTerm(20,20,u'20 km'),
     SimpleTerm(30,30,u'30 km'),
@@ -90,19 +102,21 @@ class IPartnerSearch(Interface):
 
     plz = schema.TextLine(
         title=_(u'Postleitzahl der versicherten Person'),
-        required=True
+        required=True,
+        constraint = validatePLZ
     )
 
     art = schema.Choice(
         title=_(u'Art des Netzwerkpartners'),
         vocabulary=spezialgebiete,
         required=True,
+        constraint = validatePartner
     )
 
     umkreis = schema.Choice(
         title=_(u'Angabe zur Umkreissuche'),
         vocabulary=umkreise,
-        required=False,
+        required=True,
     )
 
 class IOeffnung(Interface):

@@ -40,6 +40,11 @@
             </form>
     </div>
 
+    <!--<div class="row" tal:condition="not: view/partners">
+      <p>Für die angegebenen Suchkriterien wurde kein Netzwerkpartner gefunden. Bitte versuchen Sie, bei der Umkreissuche
+         "alle anzeigen" auszuwählen.</p>
+    </div>-->
+
     <div class="row" tal:condition="view/partners">
 
         <table class="table table-bordered">
@@ -71,6 +76,7 @@
 
 		<table class="table table-verticallisting">
 		  <tbody>
+                  <p>Hier muss noch die Ausgabe der Details implementiert werden</p>
 		  <!--<tr><th>Abteilung</th><td tal:content="python: member.get('abteilung')"/></tr>
 		  <tr><th>Position</th><td tal:content="python: member.get('position')"/></tr>
 		  <tr><th>Verwaltung</th><td tal:content="python: member.get('firma')"/></tr>
