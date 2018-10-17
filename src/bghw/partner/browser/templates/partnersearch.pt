@@ -56,7 +56,9 @@
           <thead>
           <tbody>
             <tr tal:repeat="partner view/partners">
-              <td><a href="#" data-toggle="modal" tal:attributes="data-target string:.${partner/id}" tal:content="python: partner.get('title')"/></td>
+              <!--<td><a href="#" data-toggle="modal" tal:attributes="data-target string:.${partner/id}" 
+               tal:content="python: partner.get('title')"/></td>-->
+              <td><a href="#" tal:attributes="href partner/url" tal:content="python: partner.get('title')"/></td>
               <td><span tal:content="string:${partner/plz} ${partner/ort}"/></td>
               <td tal:content="partner/telefon"/>
               <td><span tal:content="partner/printdistance"/> km</td>

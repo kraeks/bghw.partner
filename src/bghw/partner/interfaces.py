@@ -14,6 +14,8 @@ from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from geopy.geocoders import Nominatim
 from uvc.validation import validatePLZ
 from zope.schema import ValidationError
+from zope.interface import invariant, Invalid
+from time import sleep
 
 class keinPartner(ValidationError):
     u""" Bitte wählen Sie die Art des Netzwerkpartners aus. """
@@ -151,6 +153,8 @@ class IOeffnung(Interface):
         required=False,
     )
 
+class NoGeoLocation(Invalid):
+    __doc__ = u"Die Adressangabe ist nicht gültig."
 
 class IPartner(Interface):
 
@@ -245,6 +249,21 @@ class IPartner(Interface):
         required=False,
     )
 
+    @invariant
+    def validateGeoData(data):
+        if data.strhnr is not None and data.plz is not None and data.ort is not None:
+            location = '%s, Deutschland' %(data.plz)
+            latlong = geolocator.geocode(location, addressdetails=True)
+            if not latlong:
+                location = '%s, %s, Deutschland' %(data.strhnr, data.ort)
+                latlong = geolocator.geocode(location, addressdetails=True)
+            if not latlong:
+                raise NoGeoLocation(u"Für diese Adresse kann keine Geolocation ermittelt werden.")
+            plz = latlong.raw['address']['postcode']
+            meldung = u'Für Ihre Adresse wurde eine Geolocation mit der PLZ: %s ermittelt. Diese stimmt nicht mit der angegebenen PLZ überein.' % plz
+            if plz != data.plz:
+                raise NoGeoLocation(meldung)
+            
 
 class IPartnerOrdner(Interface):
 
@@ -260,25 +279,32 @@ class IPartnerOrdner(Interface):
 
 @indexer(IPartner)
 def latitudeIndexer(obj):
-    if obj.strhnr:
-        location = '%s, %s %s, Deutschland' %(obj.strhnr, obj.plz, obj.ort)
-    else:
-        location = '%s %s, Deutschland' %(obj.plz, obj.ort)
-    try:
-        latitude = geolocator.geocode(location).latitude
-    except:
-        latitude = ''
-    return latitude
+    sleep(2)
+    location = '%s, Deutschland' %(obj.plz)
+    latlong = geolocator.geocode(location, addressdetails=True)
+    if not latlong:
+        location = '%s, %s, Deutschland' %(obj.strhnr, obj.ort)
+        latlong = geolocator.geocode(location, addressdetails=True)
+    if not latlong:
+        print 'Fehler bei der Indexierung'
+        print obj.title
+        return
+    if latlong.raw['address']['postcode'][:3] != obj.plz[:3]:
+        print u'Fehler bei der Aufloesung der Adresse'
+    return latlong.latitude
 
 @indexer(IPartner)
 def longitudeIndexer(obj):
-    if obj.strhnr:
-        location = '%s, %s %s, Deutschland' %(obj.strhnr, obj.plz, obj.ort)
-    else:
-        location = '%s %s, Deutschland' %(obj.plz, obj.ort)
-    try:
-        longitude = geolocator.geocode(location).longitude
-    except:
-        longitude = ''
-    return longitude
-
+    sleep(2)
+    location = '%s, Deutschland' %(obj.plz)
+    latlong = geolocator.geocode(location, addressdetails=True)
+    if not latlong:
+        location = '%s, %s, Deutschland' %(obj.strhnr, obj.ort)
+        latlong = geolocator.geocode(location, addressdetails=True)
+    if not latlong:
+        print 'Fehler bei der Indexierung'
+        print obj.title
+        return
+    if latlong.raw['address']['postcode'][:3] != obj.plz[:3]:
+        print u'Fehler bei der Aufloesung der Adresse'
+    return latlong.longitude

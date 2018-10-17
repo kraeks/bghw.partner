@@ -33,11 +33,11 @@ class PartnerSearch(api.Form):
             return
         brains = ploneapi.content.find(portal_typ='Partner', art=data.get('art'))
         self.partners = []
+        adresse = "%s, Deutschland" % data.get('plz')
+        location = geolocator.geocode(adresse)
+        location = (location.latitude, location.longitude)
         for i in brains:
             entry = {}
-            adresse = "%s, Deutschland" % data.get('plz')
-            location = geolocator.geocode(adresse)
-            location = (location.latitude, location.longitude)
             partner = (i.latitude, i.longitude)
             distance = great_circle(location, partner).km
             if data.get('umkreis') != 'alle':
