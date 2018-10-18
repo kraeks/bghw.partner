@@ -34,7 +34,7 @@ class PartnerSearch(api.Form):
         brains = ploneapi.content.find(portal_typ='Partner', art=data.get('art'))
         self.partners = []
         adresse = "%s, Deutschland" % data.get('plz')
-        location = geolocator.geocode(adresse)
+        location = geolocator.geocode(adresse, timeout=10)
         location = (location.latitude, location.longitude)
         for i in brains:
             entry = {}

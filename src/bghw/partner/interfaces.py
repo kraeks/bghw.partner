@@ -253,10 +253,10 @@ class IPartner(Interface):
     def validateGeoData(data):
         if data.strhnr is not None and data.plz is not None and data.ort is not None:
             location = '%s, Deutschland' %(data.plz)
-            latlong = geolocator.geocode(location, addressdetails=True)
+            latlong = geolocator.geocode(location, addressdetails=True, timeout=10)
             if not latlong:
                 location = '%s, %s, Deutschland' %(data.strhnr, data.ort)
-                latlong = geolocator.geocode(location, addressdetails=True)
+                latlong = geolocator.geocode(location, addressdetails=True, timeout=10)
             if not latlong:
                 raise NoGeoLocation(u"Für diese Adresse kann keine Geolocation ermittelt werden.")
             plz = latlong.raw['address']['postcode']
@@ -279,32 +279,36 @@ class IPartnerOrdner(Interface):
 
 @indexer(IPartner)
 def latitudeIndexer(obj):
-    sleep(2)
     location = '%s, Deutschland' %(obj.plz)
-    latlong = geolocator.geocode(location, addressdetails=True)
+    latlong = geolocator.geocode(location, addressdetails=True, timeout=10)
     if not latlong:
         location = '%s, %s, Deutschland' %(obj.strhnr, obj.ort)
-        latlong = geolocator.geocode(location, addressdetails=True)
+        latlong = geolocator.geocode(location, addressdetails=True, timeout=10)
     if not latlong:
         print 'Fehler bei der Indexierung'
         print obj.title
         return
     if latlong.raw['address']['postcode'][:3] != obj.plz[:3]:
         print u'Fehler bei der Aufloesung der Adresse'
+        print obj.title
+        return
+    print '%s wurde indexiert' %obj.title
     return latlong.latitude
 
 @indexer(IPartner)
 def longitudeIndexer(obj):
-    sleep(2)
     location = '%s, Deutschland' %(obj.plz)
-    latlong = geolocator.geocode(location, addressdetails=True)
+    latlong = geolocator.geocode(location, addressdetails=True, timeout=10)
     if not latlong:
         location = '%s, %s, Deutschland' %(obj.strhnr, obj.ort)
-        latlong = geolocator.geocode(location, addressdetails=True)
+        latlong = geolocator.geocode(location, addressdetails=True, timeout=10)
     if not latlong:
         print 'Fehler bei der Indexierung'
         print obj.title
         return
     if latlong.raw['address']['postcode'][:3] != obj.plz[:3]:
         print u'Fehler bei der Aufloesung der Adresse'
+        print obj.title
+        return
+    print '%s wurde indexiert' %obj.title
     return latlong.longitude
