@@ -288,10 +288,10 @@ def latitudeIndexer(obj):
         print 'Fehler bei der Indexierung'
         print obj.title
         return
-    if latlong.raw['address']['postcode'][:3] != obj.plz[:3]:
-        print u'Fehler bei der Aufloesung der Adresse'
-        print obj.title
-        return
+    #if latlong.raw['address']['postcode'][:3] != obj.plz[:3]:
+    #    print u'Fehler bei der Aufloesung der Adresse'
+    #    print obj.title
+    #    return
     print '%s wurde indexiert' %obj.title
     return latlong.latitude
 
@@ -306,9 +306,9 @@ def longitudeIndexer(obj):
         print 'Fehler bei der Indexierung'
         print obj.title
         return
-    if latlong.raw['address']['postcode'][:3] != obj.plz[:3]:
-        print u'Fehler bei der Aufloesung der Adresse'
-        print obj.title
-        return
+    #if latlong.raw['address']['postcode'][:3] != obj.plz[:3]:
+    #    print u'Fehler bei der Aufloesung der Adresse'
+    #    print obj.title
+    #    return
     print '%s wurde indexiert' %obj.title
     return latlong.longitude
