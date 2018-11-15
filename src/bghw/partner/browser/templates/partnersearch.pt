@@ -47,7 +47,7 @@
 
     <div class="row" tal:condition="view/partners">
 
-        <table class="table table-bordered">
+        <table class="table table-striped">
           <thead>
             <th class="row-25">Titel</th>
             <th class="row-25">Ort</th>
