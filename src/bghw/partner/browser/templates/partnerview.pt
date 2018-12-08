@@ -1,0 +1,76 @@
+<div class="row">
+  <h2 tal:content="context/title"/>
+  <p class="documentDescription" tal:content="view/art"/>
+  <h3>Anschrift und IK des Netzwerkpartners</h3> 
+  <div class="row form-group">
+    <div class="col-xs-12 col-md-8">
+    <textarea cols="40" rows="5" id="anschrift" readonly tal:content="view/anschrift"/>
+    </div>
+    <div class="col-xs-12 col-md-4">
+    <button class="btn btn-primary" onclick="myFunction()">Anschrift kopieren</button>
+    </div>
+  </div>
+  <div class="row form-group" tal:condition="context/ik">
+    <div class="col-xs-12 col-md-8">
+      <input type="text" value="" tal:attributes="value context/ik" id="iknummer" readonly>
+    </div>
+    <div class="col-xs-12 col-md-4">
+      <button class="btn btn-default" onclick="copyFunction()">IK kopieren</button>
+    </div>
+  </div>
+  <h3>Kontaktinformationen</h3>
+  <div class="row">
+    <div tal:repeat="kontakt view/kontaktinfos" class="row">
+      <div class="col-xs-1 col-md-1"></div>
+      <div class="col-xs-1 col-md-1"><span tal:attributes="class python:kontakt[0];title python:kontakt[1]"/></div>
+      <div class="col-xs-10 col-md-6" tal:content="structure python: kontakt[2]" />
+      <div class="col-xs-12 col-md-4" tal:content="python: kontakt[3]" />
+    </div>
+  </div>
+
+  <h3 tal:condition="context/oeffnungszeiten">Öffnungszeiten</h3>
+  <div tal:condition="context/oeffnungszeiten" class="row">
+    <ul>
+      <li tal:repeat="oeffnung context/oeffnungszeiten" tal:content="oeffnung"/>
+    </ul>
+  </div>
+
+  <h3 tal:condition="context/ansprechpartner">Ansprechpartner beim Netzwerkpartner</h3>
+  <div tal:condition="context/ansprechpartner" class="row">
+    <ul>
+      <li tal:repeat="person context/ansprechpartner" tal:content="person"/>
+    </ul>
+  </div>
+
+  <h3 tal:condition="context/bghwansprechpartner">BGHW-Ansprechpartner</h3>
+  <div tal:condition="context/bghwansprechpartner" class="row">
+    <ul>
+      <li tal:repeat="person context/bghwansprechpartner" tal:content="person"/>
+    </ul>
+  </div>
+
+  <h3 tal:condition="context/bemerkungen">Bemerkungen</h3>
+  <div tal:condition="context/bemerkungen" class="row">
+    <div class="col-xs-1 col-md-1"></div>
+    <div class="col-xs-10 col-md-10">
+      <span tal:replace="structure context/bemerkungen/output"/>
+    </div>
+    <div class="col-xs-1 col-md-1"></div>
+  </div>
+
+  <script>
+    function myFunction() {
+      var copyText = document.getElementById("anschrift");
+      copyText.select();
+      document.execCommand("copy");
+      alert("Anschrift: " + copyText.value);
+    }
+    function copyFunction() {
+      var copyText = document.getElementById("iknummer");
+      copyText.select();
+      document.execCommand("copy");
+      alert("IK-Nummer: " + copyText.value);
+    }
+  </script>
+
+</div>

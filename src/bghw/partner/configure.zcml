@@ -3,6 +3,7 @@
     xmlns:grok="http://namespaces.zope.org/grok"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="bghw.partner">
 
   <i18n:registerTranslations directory="locales" />
@@ -38,5 +39,28 @@
 
   <adapter factory=".interfaces.latitudeIndexer" name="latitude" />
   <adapter factory=".interfaces.longitudeIndexer" name="longitude" />
+
+
+  <browser:page
+    for=".interfaces.IPartner"
+    name="edit"
+    class=".interfaces.EditForm"
+    permission="cmf.ModifyPortalContent"
+    />
+
+  <adapter
+    for="Products.CMFCore.interfaces.IFolderish
+         zope.publisher.interfaces.browser.IDefaultBrowserLayer
+         plone.dexterity.interfaces.IDexterityFTI"
+    provides="zope.publisher.interfaces.browser.IBrowserPage"
+    factory=".interfaces.AddView"
+    name="Partner"
+    />
+  <class class=".interfaces.AddView">
+    <require
+        permission="cmf.AddPortalContent"
+        interface="zope.publisher.interfaces.browser.IBrowserPage"
+        />
+  </class>
 
 </configure>

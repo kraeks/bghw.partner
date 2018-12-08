@@ -7,14 +7,20 @@ from zope.interface import Interface
 from plone.directives import form
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
+from collective.z3cform.datagridfield import DataGridFieldFactory
+from collective.z3cform.datagridfield import DictRow
 from plone.app.textfield import RichText
 from plone.indexer import indexer
+from plone.directives import form
 from collective.z3cform.datagridfield import DictRow, DataGridFieldFactory
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
+from z3c.form.interfaces import IEditForm, IAddForm
+from z3c.form import field
 from geopy.geocoders import Nominatim
 from uvc.validation import validatePLZ
 from zope.schema import ValidationError
 from zope.interface import invariant, Invalid
+from plone.dexterity.browser import edit, add
 from time import sleep
 
 class keinPartner(ValidationError):
@@ -24,8 +30,6 @@ def validatePartner(value):
     if value:
         return True
     raise keinPartner
-
-
 
 geolocator = Nominatim(user_agent="bghw.partner")
 
@@ -100,6 +104,29 @@ spezialgebiete = SimpleVocabulary((
     SimpleTerm(u'neurologischereha', u'neurologischereha', u'neurologische Rehabilitation'),
     SimpleTerm(u'wohnungshilfe', u'wohnungshilfe', u'Wohnungshilfe')))
 
+kontaktarten = SimpleVocabulary((
+    SimpleTerm(u'telefon_arbeit', u'telefon_arbeit', u'Telefon Arbeit'),
+    SimpleTerm(u'telefon_privat', u'telefon_privat', u'Telefon Privat'),
+    SimpleTerm(u'telefon_zentrale', u'telefon_zentrale', u'Telefon Zentrale'),
+    SimpleTerm(u'mobil', u'mobil', u'Mobiltelefon'),
+    SimpleTerm(u'fax_arbeit', u'fax_arbeit', u'Telefax Arbeit'),
+    SimpleTerm(u'fax_privat', u'fax_privat', u'Telefax Privat'),
+    SimpleTerm(u'pager', u'pager', u'pager'),
+    SimpleTerm(u'andere', u'andere', u'Andere'),
+    SimpleTerm(u'email', u'email', u'E-Mail'),
+    SimpleTerm(u'www', u'www', u'WWW'),
+    ))
+
+class IKontaktOptions(form.Schema):
+    kontaktart = schema.Choice(title=u"Kontaktart",
+                               source=kontaktarten,
+                               required=True)
+    kontaktadresse = schema.TextLine(title=u'Nummer, Adresse, Konto',
+                                     required=True)
+    bemerkung = schema.TextLine(title=u'Bemerkung',
+                                required=False)
+
+
 class IPartnerSearch(Interface):
 
     plz = schema.TextLine(
@@ -165,11 +192,17 @@ class IPartner(Interface):
         required=True,
     )
 
-    description = schema.Text(
-        title=_(u'Beschreibung'),
-        description=_(u'Hier können Sie die Leistungen des Netzwerkpartners kurz\
-                      beschreiben, z.B.: Spezialist im Bereich Schmerztherapie'),
-        required=False,
+    #description = schema.Text(
+    #    title=_(u'Beschreibung'),
+    #    description=_(u'Hier können Sie die Leistungen des Netzwerkpartners kurz\
+    #                  beschreiben, z.B.: Spezialist im Bereich Schmerztherapie'),
+    #    required=False,
+    #)
+
+    art = schema.List(
+        title=_(u'Art des Netzwerkpartners'),
+        value_type = schema.Choice(vocabulary=spezialgebiete),
+        required=True,
     )
 
     ik = schema.TextLine(
@@ -192,42 +225,38 @@ class IPartner(Interface):
         required=True,
     )
 
+    kontaktinformationen = schema.List(title=u"Kontaktinformationen",
+                                       description=u"Bitte tragen Sie hier die Kontaktinformationen zum Netzwerkpartner ein.",
+                                       value_type=DictRow(title=u"Kontaktliste", schema=IKontaktOptions),
+                                       required=False)
+
     www = schema.URI(
         title=_(u'Weblink/Homepage'),
+        description=_(u'Achtung veraltet, bitte ins Feld Kontaktinformationen übernehmen und speichern'),
         required=False,
     )
 
     telefon = schema.TextLine(
         title=_(u'Telefon'),
-        required=True,
+        description=_(u'Achtung veraltet, bitte ins Feld Kontaktinformationen übernehmen und speichern'),
+        required=False,
     )
 
     mobil = schema.TextLine(
         title=_(u'Mobiltelefon'),
+        description=_(u'Achtung veraltet, bitte ins Feld Kontaktinformationen übernehmen und speichern'),
         required=False,
     )
 
     telefax = schema.TextLine(
         title=_(u'Telefax'),
+        description=_(u'Achtung veraltet, bitte ins Feld Kontaktinformationen übernehmen und speichern'),
         required=False,
     )
 
     email = schema.TextLine(
         title=_(u'eMail Adresse'),
-        required=True,
-    )
-
-    form.widget(art=CheckBoxFieldWidget)
-    art = schema.List(
-        title=_(u'Art des Netzwerkpartners'),
-        value_type = schema.Choice(vocabulary=spezialgebiete),
-        required=True,
-    )
-
-    ansprechpartner = schema.List(
-        title=_(u'Feste Ansprechpartner'),
-        description=u'Bitte nur einen Namen pro Zeile eintragen',
-        value_type = schema.TextLine(),
+        description=_(u'Achtung veraltet, bitte ins Feld Kontaktinformationen übernehmen und speichern'),
         required=False,
     )
 
@@ -235,6 +264,13 @@ class IPartner(Interface):
         title=u'Liste der Öffnungszeiten und/oder Gesprächstermine',
         value_type = schema.TextLine(),
         required = False,
+    )
+
+    ansprechpartner = schema.List(
+        title=_(u'Feste Ansprechpartner'),
+        description=u'Bitte nur einen Namen pro Zeile eintragen',
+        value_type = schema.TextLine(),
+        required=False,
     )
 
     bghwansprechpartner = schema.List(
@@ -312,3 +348,23 @@ def longitudeIndexer(obj):
     #    return
     print '%s wurde indexiert' %obj.title
     return latlong.longitude
+
+class EditForm(edit.DefaultEditForm):
+    fields = field.Fields(IPartner)
+    fields['art'].widgetFactory = CheckBoxFieldWidget
+    fields['kontaktinformationen'].widgetFactory = DataGridFieldFactory
+
+class AddForm(add.DefaultAddForm):
+    portal_type = u"Partner"
+    fields = field.Fields(IPartner)
+    fields['www'].mode = 'hidden'
+    fields['telefon'].mode = 'hidden'
+    fields['telefax'].mode = 'hidden'
+    fields['mobil'].mode = 'hidden'
+    fields['email'].mode = 'hidden'
+    fields['art'].widgetFactory = CheckBoxFieldWidget
+    fields['kontaktinformationen'].widgetFactory = DataGridFieldFactory
+
+class AddView(add.DefaultAddView):
+    form = AddForm
+
