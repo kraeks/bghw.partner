@@ -156,7 +156,6 @@ class IPartnerSearch(Interface):
 
 class IPartnerWordSearch(Interface):
 
-
     begriff = schema.TextLine(
         title=_(u'Suchbegriff'),
         required=True,
@@ -165,16 +164,8 @@ class IPartnerWordSearch(Interface):
     art = schema.Choice(
         title=_(u'Art des Netzwerkpartners'),
         vocabulary=spezialgebiete,
-        required=True,
-        constraint = validatePartner
+        required=False,
     )
-
-    umkreis = schema.Choice(
-        title=_(u'Angabe zur Umkreissuche'),
-        vocabulary=umkreise,
-        required=True,
-    )
-
 
 class IOeffnung(Interface):
 

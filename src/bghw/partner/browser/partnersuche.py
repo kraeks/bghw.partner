@@ -84,7 +84,10 @@ class PartnerWordSearch(api.Form):
         data, errors = self.extractData()
         if errors:
             return
-        brains = ploneapi.content.find(portal_typ='Partner', partnersuche=data.get('begriff'), art=data.get('art'))
+        if not data.get('art'):
+            brains = ploneapi.content.find(portal_typ='Partner', partnersuche=data.get('begriff'))
+        else:
+            brains = ploneapi.content.find(portal_typ='Partner', partnersuche=data.get('begriff'), art=data.get('art'))
         self.partners = []
         for i in brains:
             entry = {}
