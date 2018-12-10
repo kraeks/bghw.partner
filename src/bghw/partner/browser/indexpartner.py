@@ -12,9 +12,12 @@ class reindexPartner(api.Page):
         brains = ploneapi.content.find(portal_type="Partner")
         count = 0
         for i in brains:
+            sleep(1)
             obj = i.getObject()
             obj.reindexObject()
             if count in counts:
-                sleep(60)
+                print '%s Netzwerkpartner wurden indexiert' %count
+                sleep(30)
             count += 1
+            print count
         return 'Es wurden %s Netzwerkpartner neu indexiert.' % count

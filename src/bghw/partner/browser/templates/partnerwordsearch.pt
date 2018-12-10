@@ -17,19 +17,14 @@
       <!--<p class="documentDescription">Hier steht noch ein Text zur Merkliste...</p>-->
 
       <ul class="nav nav-tabs">
-        <li role="presentation" class="active"><a href="#" tal:attributes="href view/formurl">nach Postleitzahl</a></li>
-        <li role="presentation"><a href="#" tal:attributes="href view/altformurl">nach Suchbegriff</a></li>
+        <li role="presentation"><a href="#" tal:attributes="href view/altformurl">nach Postleitzahl</a></li>
+        <li role="presentation" class="active"><a href="#" tal:attributes="href view/formurl">nach Suchbegriff</a></li>
       </ul>
-
 
             <form style="margin-left:10px" enctype="multipart/form-data" method="post" novalidate="novalidate"
                   action="." tal:attributes="action view/formurl">
 
-                 <div tal:define="widget python: view.fieldWidgets.get('form.field.plz')">
-                   <div metal:use-macro="here/@@formmacros/macros/bootstrapfields" />
-                 </div>
-
-                 <div tal:define="widget python: view.fieldWidgets.get('form.field.umkreis')">
+                 <div tal:define="widget python: view.fieldWidgets.get('form.field.begriff')">
                    <div metal:use-macro="here/@@formmacros/macros/bootstrapfields" />
                  </div>
 
@@ -57,7 +52,7 @@
             <th class="row-25">Titel</th>
             <th class="row-25">Ort</th>
             <th class="row-25">Telefon</th>
-            <th class="row-25">Entfernung</th>
+            <th class="row-25">Partnerart</th>
           <thead>
           <tbody>
             <tr tal:repeat="partner view/partners">
@@ -66,7 +61,7 @@
               <td><a href="#" tal:attributes="href partner/url" tal:content="python: partner.get('title')"/></td>
               <td><span tal:content="string:${partner/plz} ${partner/ort}"/></td>
               <td tal:content="partner/telefon"/>
-              <td><span tal:content="partner/printdistance"/> km</td>
+              <td><span tal:content="partner/partnerarten"/></td>
             </tr>
           </tbody>
         </table>

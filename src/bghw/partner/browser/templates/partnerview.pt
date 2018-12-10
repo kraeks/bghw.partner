@@ -23,8 +23,9 @@
     <div tal:repeat="kontakt view/kontaktinfos" class="row">
       <div class="col-xs-1 col-md-1"></div>
       <div class="col-xs-1 col-md-1"><span tal:attributes="class python:kontakt[0];title python:kontakt[1]"/></div>
-      <div class="col-xs-10 col-md-6" tal:content="structure python: kontakt[2]" />
-      <div class="col-xs-12 col-md-4" tal:content="python: kontakt[3]" />
+      <div class="col-xs-10 col-md-10"><span tal:content="structure python: kontakt[2]">
+                                       <span tal:condition="python: kontakt[3]" tal:content="python: '('+kontakt[3]+')'"/>
+      </div>
     </div>
   </div>
 

@@ -39,6 +39,7 @@
 
   <adapter factory=".interfaces.latitudeIndexer" name="latitude" />
   <adapter factory=".interfaces.longitudeIndexer" name="longitude" />
+  <adapter factory=".interfaces.suchbegriffIndexer" name="partnersuche" />
 
 
   <browser:page

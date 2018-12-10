@@ -1,7 +1,7 @@
 from zope.interface import Interface
 from uvc.api import api
 from plone import api as ploneapi
-from bghw.partner.interfaces import IPartnerSearch
+from bghw.partner.interfaces import IPartnerSearch, IPartnerWordSearch, spezialgebiete
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 from geopy.distance import great_circle
@@ -20,9 +20,9 @@ class PartnerSearch(api.Form):
 
     ignoreContent = False
 
-
     def update(self):
         self.formurl = self.context.absolute_url() + '/partnersearch'
+        self.altformurl = self.context.absolute_url() + '/partnerwordsearch'
         if not hasattr(self, 'partners'):
             self.partners = []
 
@@ -65,3 +65,40 @@ class PartnerSearch(api.Form):
                 self.partners.append(entry)
         if self.partners:
             self.partners = sorted(self.partners, key=itemgetter('distance'))
+
+class PartnerWordSearch(api.Form):
+    api.context(Interface)
+    label = u'Suche in der Partnerdatenbank'
+    fields = api.Fields(IPartnerWordSearch)
+
+    ignoreContent = False
+
+    def update(self):
+        self.formurl = self.context.absolute_url() + '/partnerwordsearch'
+        self.altformurl = self.context.absolute_url() + '/partnersearch'
+        if not hasattr(self, 'partners'):
+            self.partners = []
+
+    @api.action('Suchen')
+    def handle_search(self):
+        data, errors = self.extractData()
+        if errors:
+            return
+        brains = ploneapi.content.find(portal_typ='Partner', partnersuche=data.get('begriff'), art=data.get('art'))
+        self.partners = []
+        for i in brains:
+            entry = {}
+            obj = i.getObject()
+            entry['title'] = obj.title
+            entry['id'] = obj.UID()
+            entry['url'] = obj.absolute_url()
+            entry['plz'] = obj.plz
+            entry['ort'] = obj.ort
+            entry['telefon'] = obj.telefon
+            partnerarten = []
+            for k in obj.art:
+                partnerarten.append(spezialgebiete.getTerm(k).title)
+            entry['partnerarten'] = ', '.join(partnerarten)
+            self.partners.append(entry)
+        if self.partners:
+            self.partners = sorted(self.partners, key=itemgetter('plz'))

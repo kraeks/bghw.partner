@@ -85,23 +85,23 @@ standorte = SimpleVocabulary((
 
 spezialgebiete = SimpleVocabulary((
     SimpleTerm(u'', u'', u'Auswahl'),
-    SimpleTerm(u'rehaplan', u'rehaplan', u'Reha-Plan Sprechstunde'),
-    SimpleTerm(u'schuhsprechstunde', u'schuhsprechstunde', u'Schuhsprechstunde'),
-    SimpleTerm(u'prothesensprechstunde', u'prothesensprechstunde', u'Prothesensprechstunde'),
-    SimpleTerm(u'handkompetenzzentrum', u'handkompetenzzentrum', u'Hand-Kompetenzzentrum'),
-    SimpleTerm(u'psycheaertzlich', u'psycheartzlich', u'BGU / SAV-Zentrum Psyche ärztlich'),
-    SimpleTerm(u'psychetherapeutisch', u'psychetherapeutisch', u'Psyche therapeutisch'),
-    SimpleTerm(u'schmerz', u'schmerz', u'Schmerz'),
-    SimpleTerm(u'beraterbghw', u'beraterbghw', u'ärztliche Berater/innen der BGHW'),
-    SimpleTerm(u'heilverfahrenskontrollen', u'heilverfahrenskontrollen', u'Ärzte und Kliniken für Heilverfahrenskontrollen'),
     SimpleTerm(u'assessmentverfahren', u'assessmentverfahren', u'Assessmentverfahren zur Teilhabe am Arbeitsleben'),
+    SimpleTerm(u'beraterbghw', u'beraterbghw', u'ärztliche Berater/innen der BGHW'),
     SimpleTerm(u'berufsfindung', u'berufsfindung', u'Eignungsuntersuchung, Berufsfindung und Arbeitserprobung'),
-    SimpleTerm(u'teilhabeleistung', u'teilhabeleistung', u'Einrichtungen zur Durchführung qualifizierter Teilhabeleistungen'),
-    SimpleTerm(u'privarbeitsvermittler', u'privarbeitsvermittler', u'Private Arbeitsvermittler'),
+    SimpleTerm(u'handkompetenzzentrum', u'handkompetenzzentrum', u'Hand-Kompetenzzentrum'),
+    SimpleTerm(u'heilverfahrenskontrollen', u'heilverfahrenskontrollen', u'Ärzte und Kliniken für Heilverfahrenskontrollen'),
     SimpleTerm(u'kfzhilfe', u'kfzhilfe', u'Leistungserbringer im Rahmen der KFZ-Hilfe'),
+    SimpleTerm(u'neurologischereha', u'neurologischereha', u'neurologische Rehabilitation'),
     SimpleTerm(u'pflegeanbieter', u'pflegeanbieter', u'Pflegeanbieter'),
     SimpleTerm(u'pflegeeinrichtung', u'pflegeeinrichtung', u'Pflegeeinrichtung, SHT und Querschnitt'),
-    SimpleTerm(u'neurologischereha', u'neurologischereha', u'neurologische Rehabilitation'),
+    SimpleTerm(u'privarbeitsvermittler', u'privarbeitsvermittler', u'Private Arbeitsvermittler'),
+    SimpleTerm(u'prothesensprechstunde', u'prothesensprechstunde', u'Prothesensprechstunde'),
+    SimpleTerm(u'psycheaertzlich', u'psycheartzlich', u'BGU / SAV-Zentrum Psyche ärztlich'),
+    SimpleTerm(u'psychetherapeutisch', u'psychetherapeutisch', u'Psyche therapeutisch'),
+    SimpleTerm(u'rehaplan', u'rehaplan', u'Reha-Plan Sprechstunde'),
+    SimpleTerm(u'schmerz', u'schmerz', u'Schmerz'),
+    SimpleTerm(u'schuhsprechstunde', u'schuhsprechstunde', u'Schuhsprechstunde'),
+    SimpleTerm(u'teilhabeleistung', u'teilhabeleistung', u'Einrichtungen zur Durchführung qualifizierter Teilhabeleistungen'),
     SimpleTerm(u'wohnungshilfe', u'wohnungshilfe', u'Wohnungshilfe')))
 
 kontaktarten = SimpleVocabulary((
@@ -130,9 +130,15 @@ class IKontaktOptions(form.Schema):
 class IPartnerSearch(Interface):
 
     plz = schema.TextLine(
-        title=_(u'Postleitzahl der versicherten Person'),
+        title=_(u'Postleitzahl'),
         required=True,
         constraint = validatePLZ
+    )
+
+    umkreis = schema.Choice(
+        title=_(u'Angabe zur Umkreissuche'),
+        vocabulary=umkreise,
+        required=True,
     )
 
     art = schema.Choice(
@@ -147,6 +153,28 @@ class IPartnerSearch(Interface):
         vocabulary=umkreise,
         required=True,
     )
+
+class IPartnerWordSearch(Interface):
+
+
+    begriff = schema.TextLine(
+        title=_(u'Suchbegriff'),
+        required=True,
+    )
+
+    art = schema.Choice(
+        title=_(u'Art des Netzwerkpartners'),
+        vocabulary=spezialgebiete,
+        required=True,
+        constraint = validatePartner
+    )
+
+    umkreis = schema.Choice(
+        title=_(u'Angabe zur Umkreissuche'),
+        vocabulary=umkreise,
+        required=True,
+    )
+
 
 class IOeffnung(Interface):
 
@@ -312,6 +340,31 @@ class IPartnerOrdner(Interface):
         title=_(u'Description'),
         required=False,
     )
+
+@indexer(IPartner)
+def suchbegriffIndexer(obj):
+    wordlist = []
+    wordlist += obj.title.split(' ')
+    wordlist += obj.strhnr.split(' ')[:-1]
+    wordlist += obj.ort.split(' ')
+    if obj.ansprechpartner:
+        for i in obj.ansprechpartner:
+            draftlist = i.split(' ')
+            if 'Frau' in draftlist:
+                draftlist.remove('Frau')
+            if 'Herr' in draftlist:
+                draftlist.remove('Herr')
+            if 'Dr.' in draftlist:
+                draftlist.remove('Dr.')
+            if 'Prof.' in draftlist:
+                draftlist.remove('Prof.')
+            wordlist += draftlist
+    if obj.bemerkungen:
+        wordlist += obj.bemerkungen.raw.split(' ')
+    if not wordlist:
+        return ""
+    suchstring = u' '.join(wordlist)
+    return suchstring
 
 @indexer(IPartner)
 def latitudeIndexer(obj):

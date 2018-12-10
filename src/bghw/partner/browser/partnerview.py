@@ -8,9 +8,9 @@ api.templatedir('templates')
 def getGlyph(value):
     glyphdict = {
         'telefon':'glyphicon glyphicon-phone-alt',
-        'telefon_arbeit':'glyphicon glyphicon-phone-alt',
-        'telefon_privat':'glyphicon glyphicon-phone-alt',
-        'telefon_zentrale':'glyphicon glyphicon-phone-alt',
+        'telefon_arbeit':'glyphicon glyphicon-earphone',
+        'telefon_privat':'glyphicon glyphicon-earphone',
+        'telefon_zentrale':'glyphicon glyphicon-earphone',
         'mobile':'glyphicon glyphicon-phone',
         'mobil':'glyphicon glyphicon-phone',
         'email':'glyphicon glyphicon-send',
@@ -34,12 +34,15 @@ class Partnerview(api.Page):
             for i in self.context.art:
                 partnertitel.append(spezialgebiete.getTerm(i).title)
             self.art = ', '.join(partnertitel)
+        titname = ''
+        if self.context.ansprechpartner:
+            titname = self.context.ansprechpartner[0]
         self.anschrift="""\
 %s
 %s
-
+%s
 %s %s
-        """ %(self.context.title, self.context.strhnr, self.context.plz, self.context.ort)
+        """ %(self.context.title, titname, self.context.strhnr, self.context.plz, self.context.ort)
         self.kontaktinfos = []
         oldkontakt = [(u'telefon', u'Telefon'), (u'telefax', u'Telefax'), (u'mobil', u'Mobil'), (u'email', u'E-Mail'), (u'www', u'WWW')]
         for value,title in oldkontakt:
