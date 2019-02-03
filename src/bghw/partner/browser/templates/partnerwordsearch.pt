@@ -45,14 +45,16 @@
          "alle anzeigen" auszuwählen.</p>
     </div>-->
 
+    <p class="documentDescription" tal:condition="view/message" tal:content="view/message"/>
+
     <div class="row" tal:condition="view/partners">
 
         <table class="table table-striped">
           <thead>
-            <th class="row-25">Titel</th>
-            <th class="row-25">Ort</th>
-            <th class="row-25">Telefon</th>
-            <th class="row-25">Partnerart</th>
+            <th>Titel</th>
+            <th>Ort</th>
+            <th>Telefon</th>
+            <th>Partnerart</th>
           <thead>
           <tbody>
             <tr tal:repeat="partner view/partners">
@@ -60,7 +62,13 @@
                tal:content="python: partner.get('title')"/></td>-->
               <td><a href="#" tal:attributes="href partner/url" tal:content="python: partner.get('title')"/></td>
               <td><span tal:content="string:${partner/plz} ${partner/ort}"/></td>
-              <td tal:content="partner/telefon"/>
+              <td><ul><li tal:repeat="mykontakt partner/kontakt">
+                        <span tal:condition="python: mykontakt[0]" class="" title="" tal:attributes="class python:mykontakt[0];
+                                                                                                     title python:mykontakt[1]"/>
+                        <span tal:content="structure python: mykontakt[2]"/>
+                      </li>
+                  </ul>
+              </td>
               <td><span tal:content="partner/partnerarten"/></td>
             </tr>
           </tbody>

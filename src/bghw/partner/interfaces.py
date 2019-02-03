@@ -373,6 +373,7 @@ def latitudeIndexer(obj):
     #    print obj.title
     #    return
     print '%s wurde indexiert' %obj.title
+    sleep(1)
     return latlong.latitude
 
 @indexer(IPartner)
@@ -391,6 +392,7 @@ def longitudeIndexer(obj):
     #    print obj.title
     #    return
     print '%s wurde indexiert' %obj.title
+    sleep(1)
     return latlong.longitude
 
 class EditForm(edit.DefaultEditForm):

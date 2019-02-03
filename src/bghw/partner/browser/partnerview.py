@@ -7,7 +7,7 @@ api.templatedir('templates')
 
 def getGlyph(value):
     glyphdict = {
-        'telefon':'glyphicon glyphicon-phone-alt',
+        'telefon':'glyphicon glyphicon-earphone',
         'telefon_arbeit':'glyphicon glyphicon-earphone',
         'telefon_privat':'glyphicon glyphicon-earphone',
         'telefon_zentrale':'glyphicon glyphicon-earphone',
