@@ -21,6 +21,7 @@
   <!-- Hierarchy control -->
   <property name="allowed_content_types">
     <element value="Partner" />
+    <element value="PartnerOrdner" />
   </property>
   <property name="filter_content_types">True</property>
   <property name="global_allow">True</property>

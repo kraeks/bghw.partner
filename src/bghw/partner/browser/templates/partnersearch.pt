@@ -58,7 +58,7 @@
           <thead>
             <th>Titel</th>
             <th>Ort</th>
-            <th>Telefon</th>
+            <th>Kontakt</th>
             <th>Entfernung</th>
           <thead>
           <tbody>
@@ -67,12 +67,12 @@
                tal:content="python: partner.get('title')"/></td>-->
               <td><a href="#" tal:attributes="href partner/url" tal:content="python: partner.get('title')"/></td>
               <td><span tal:content="string:${partner/plz} ${partner/ort}"/></td>
-              <td><ul><li tal:repeat="mykontakt partner/kontakt">
+              <td><div tal:repeat="mykontakt partner/kontakt">
                         <span tal:condition="python: mykontakt[0]" class="" title="" tal:attributes="class python:mykontakt[0];
                                                                                                      title python:mykontakt[1]"/>
-                        <span tal:content="structure python: mykontakt[2]"/>
-                      </li>
-                  </ul>
+                        <span tal:content="structure python: mykontakt[2]"/><br/>
+                      </div>
+                  
               </td>
               <td><span tal:content="partner/printdistance"/> km</td>
             </tr>
