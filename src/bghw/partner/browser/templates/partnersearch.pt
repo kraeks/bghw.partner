@@ -7,9 +7,14 @@
 
     <metal:block fill-slot="main">
 
+    <div class="row" tal:content="structure provider:plone.abovecontenttitle"/>
+
         <h1 class="documentFirstHeading" tal:content="view/label | nothing" />
 
         <div id="content-core">
+
+
+
 
     <div class="row">
 
@@ -116,6 +121,8 @@
 
 
         </div>
+
+    <div class="row" tal:content="structure provider:plone.belowcontentbody"/>
 
     </metal:block>
 
