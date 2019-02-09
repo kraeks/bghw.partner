@@ -42,6 +42,9 @@ class PartnerSearch(api.Form):
 
     def update(self):
         self.message = ''
+        self.headimage = ''
+        if self.context.image:
+            self.headimage = "%s/@@images/image/large" %self.context.absolute_url()
         self.formurl = self.context.absolute_url() + '/partnersearch'
         self.altformurl = self.context.absolute_url() + '/partnerwordsearch'
         if not hasattr(self, 'partners'):
@@ -122,6 +125,9 @@ class PartnerWordSearch(api.Form):
 
     def update(self):
         self.message = ''
+        self.headimage = ''
+        if self.context.image:
+            self.headimage = "%s/@@images/image/large" %self.context.absolute_url()
         self.formurl = self.context.absolute_url() + '/partnerwordsearch'
         self.altformurl = self.context.absolute_url() + '/partnersearch'
         if not hasattr(self, 'partners'):

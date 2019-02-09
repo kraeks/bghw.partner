@@ -22,6 +22,7 @@ from zope.schema import ValidationError
 from zope.interface import invariant, Invalid
 from plone.dexterity.browser import edit, add
 from time import sleep
+from plone import api as ploneapi
 
 class keinPartner(ValidationError):
     u""" Bitte wählen Sie die Art des Netzwerkpartners aus. """
@@ -359,6 +360,15 @@ def suchbegriffIndexer(obj):
 
 @indexer(IPartner)
 def latitudeIndexer(obj):
+    #Ein bereits indexiertes Objekt indexieren wir nicht erneut
+    objuid = obj.UID()
+    brains = ploneapi.content.find(UID=objuid)
+    if brains:
+        brain = brains[0]
+        if brain.latitude:
+            print 'Aufruf Latitude gespart'
+            return brain.latitude
+    ####
     location = '%s, Deutschland' %(obj.plz)
     latlong = geolocator.geocode(location, addressdetails=True, timeout=10)
     if not latlong:
@@ -378,6 +388,15 @@ def latitudeIndexer(obj):
 
 @indexer(IPartner)
 def longitudeIndexer(obj):
+    #Ein bereits indexiertes Objekt indexieren wir nicht erneut
+    objuid = obj.UID()
+    brains = ploneapi.content.find(UID=objuid)
+    if brains:
+        brain = brains[0]
+        if brain.longitude:
+            print 'Aufruf Longitude gespart'
+            return brain.longitude
+    ###
     location = '%s, Deutschland' %(obj.plz)
     latlong = geolocator.geocode(location, addressdetails=True, timeout=10)
     if not latlong:

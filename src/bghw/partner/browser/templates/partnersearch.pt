@@ -7,14 +7,13 @@
 
     <metal:block fill-slot="main">
 
-    <div class="row" tal:content="structure provider:plone.abovecontenttitle"/>
+    <div class="row" tal:condition="view/headimage">
+        <img class="img-responsive" src="" tal:attributes="src view/headimage">
+    </div>
 
         <h1 class="documentFirstHeading" tal:content="view/label | nothing" />
 
         <div id="content-core">
-
-
-
 
     <div class="row">
 
