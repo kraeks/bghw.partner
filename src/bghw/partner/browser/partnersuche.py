@@ -41,6 +41,7 @@ class PartnerSearch(api.Form):
     ignoreContent = False
 
     def update(self):
+        #self.portal_type = ''
         self.message = ''
         self.headimage = ''
         if self.context.image:
