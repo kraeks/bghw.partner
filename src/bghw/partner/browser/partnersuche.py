@@ -96,7 +96,8 @@ class PartnerSearch(api.Form):
                     entry['ort'] = obj.ort
                     entry['kontakt'] = self.createKontaktinfos(obj)
                     entry['distance'] = distance
-                    entry['printdistance'] = "%.2f" % distance
+                    entry['printdistance'] = int(round(distance))
+                    entry['zusatzinfos'] = obj.zusatzinfos
                     self.partners.append(entry)
             else:
                 obj = i.getObject()
@@ -107,7 +108,8 @@ class PartnerSearch(api.Form):
                 entry['ort'] = obj.ort
                 entry['kontakt'] = self.createKontaktinfos(obj)
                 entry['distance'] = distance
-                entry['printdistance'] = "%.2f" % distance
+                entry['printdistance'] = int(round(distance))
+                entry['zusatzinfos'] = obj.zusatzinfos
                 self.partners.append(entry)
         if self.partners:
             self.partners = sorted(self.partners, key=itemgetter('distance'))

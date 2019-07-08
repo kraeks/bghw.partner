@@ -64,6 +64,7 @@
             <th>Ort</th>
             <th>Kontakt</th>
             <th>Entfernung</th>
+            <th>Zusatzinfos</th>
           <thead>
           <tbody>
             <tr tal:repeat="partner view/partners">
@@ -79,6 +80,7 @@
                   
               </td>
               <td><span tal:content="partner/printdistance"/> km</td>
+              <td><p tal:repeat="info partner/zusatzinfos" tal:content="info"/></td>
             </tr>
           </tbody>
         </table>

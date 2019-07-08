@@ -286,6 +286,13 @@ class IPartner(Interface):
         required = False,
     )
 
+    zusatzinfos = schema.List(
+        title=u"Zusatzinformationen zum Netzwerkpartner",
+        description=u"Informationen zu Fachgebieten, Fremdsprachenkenntnissen, etc. (1 Eintrag pro Zeile).",
+        value_type = schema.TextLine(),
+        required = False,
+    )
+
     ansprechpartner = schema.List(
         title=_(u'Feste Ansprechpartner'),
         description=u'Bitte nur einen Namen pro Zeile eintragen',
@@ -351,6 +358,8 @@ def suchbegriffIndexer(obj):
             if 'Prof.' in draftlist:
                 draftlist.remove('Prof.')
             wordlist += draftlist
+    if obj.zusatzinfos:
+        wordlist += obj.zusatzinfos
     if obj.bemerkungen:
         wordlist += obj.bemerkungen.raw.split(' ')
     if not wordlist:

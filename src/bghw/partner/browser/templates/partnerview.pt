@@ -50,6 +50,17 @@
     </ul>
   </div>
 
+  <h3 tal:condition="context/zusatzinfos">Zusatzinformationen</h3>
+  <div tal:condition="context/zusatzinfos" class="row">
+    <div class="col-xs-1 col-md-1"></div>
+    <div class="col-xs-10 col-md-10">
+      <ul>
+        <li tal:repeat="info context/zusatzinfos" tal:content="info"/>
+      </ul>
+    </div>
+    <div class="col-xs-1 col-md-1"></div>
+  </div>
+
   <h3 tal:condition="context/bemerkungen">Bemerkungen</h3>
   <div tal:condition="context/bemerkungen" class="row">
     <div class="col-xs-1 col-md-1"></div>
