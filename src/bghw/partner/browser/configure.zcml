@@ -12,10 +12,16 @@
       />
 
   <!-- Publish static files -->
-  <plone:static
-      name="bghw.partner"
-      type="plone"
-      directory="static"
-      />
+
+  <browser:resourceDirectory
+    name="bghw.partner"
+    directory="static" />
+
+  <browser:page
+    name="locations"
+    for="*"
+    class=".locations.Locations"
+    permission="zope2.View"
+    />
 
 </configure>

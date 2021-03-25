@@ -46,6 +46,7 @@ setup(
         'plone.app.relationfield',
         'collective.z3cform.datagridfield',
         'collective.geo.bundle',
+        'jsonlib',
     ],
     extras_require={
         'test': [

@@ -7,6 +7,7 @@ from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 from geopy.distance import great_circle
 from operator import itemgetter
+from collective.beaker.interfaces import ISession
 
 geolocator = Nominatim(user_agent="bghw.partner")
 
@@ -46,7 +47,7 @@ class PartnerSearch(api.Form):
         self.headimage = ''
         if self.context.image:
             self.headimage = "%s/@@images/image/large" %self.context.absolute_url()
-        self.formurl = self.context.absolute_url() + '/partnersearch'
+        self.formurl = self.context.absolute_url()
         self.altformurl = self.context.absolute_url() + '/partnerwordsearch'
         if not hasattr(self, 'partners'):
             self.partners = []
@@ -80,8 +81,18 @@ class PartnerSearch(api.Form):
         brains = ploneapi.content.find(portal_typ='Partner', art=data.get('art'))
         self.partners = []
         adresse = "%s, Deutschland" % data.get('plz')
+        if data.get('strhnr'):
+            adresse = "%s, %s, Deutschland" % (data.get('strhnr'), data.get('plz'))
         location = geolocator.geocode(adresse, timeout=10)
-        location = (location.latitude, location.longitude)
+        geolocations = []
+        if location:
+            location = (location.latitude, location.longitude)
+            geolocation = {"title": "Adresse Kunde",
+                       "lon": location[1],
+                       "lat": location[0],
+                       "color": '#555555'}
+            geolocations = [geolocation]
+        session = ISession(self.request)
         for i in brains:
             entry = {}
             partner = (i.latitude, i.longitude)
@@ -99,6 +110,12 @@ class PartnerSearch(api.Form):
                     entry['printdistance'] = int(round(distance))
                     entry['zusatzinfos'] = obj.zusatzinfos
                     self.partners.append(entry)
+                    geolocation = {"title": obj.title,
+                        "lon": i.longitude,
+                        "lat": i.latitude,
+                        "color": '#004994'}
+                    geolocations.append(geolocation)
+
             else:
                 obj = i.getObject()
                 entry['title'] = obj.title
@@ -111,6 +128,12 @@ class PartnerSearch(api.Form):
                 entry['printdistance'] = int(round(distance))
                 entry['zusatzinfos'] = obj.zusatzinfos
                 self.partners.append(entry)
+                geolocation = {"title": obj.title,
+                       "lon": i.longitude,
+                       "lat": i.latitude,
+                       "color": '#004994'}
+                geolocations.append(geolocation)
+
         if self.partners:
             self.partners = sorted(self.partners, key=itemgetter('distance'))
         else:
@@ -118,6 +141,8 @@ class PartnerSearch(api.Form):
                             und versuchen es dann erneut.'
             #ploneapi.portal.show_message(self.message, self.request, type="error")
             #return self.response.redirect(self.formurl)
+        session['geodata'] = geolocations
+        session.save()
 
 class PartnerWordSearch(api.Form):
     api.context(Interface)
@@ -132,7 +157,7 @@ class PartnerWordSearch(api.Form):
         if self.context.image:
             self.headimage = "%s/@@images/image/large" %self.context.absolute_url()
         self.formurl = self.context.absolute_url() + '/partnerwordsearch'
-        self.altformurl = self.context.absolute_url() + '/partnersearch'
+        self.altformurl = self.context.absolute_url()
         if not hasattr(self, 'partners'):
             self.partners = []
 
@@ -164,9 +189,9 @@ class PartnerWordSearch(api.Form):
         if errors:
             return
         if not data.get('art'):
-            brains = ploneapi.content.find(portal_typ='Partner', partnersuche=data.get('begriff'))
+            brains = ploneapi.content.find(portal_typ='Partner', partnersuche=data.get('begriff') + "*")
         else:
-            brains = ploneapi.content.find(portal_typ='Partner', partnersuche=data.get('begriff'), art=data.get('art'))
+            brains = ploneapi.content.find(portal_typ='Partner', partnersuche=data.get('begriff') + "*", art=data.get('art'))
         self.partners = []
         for i in brains:
             entry = {}

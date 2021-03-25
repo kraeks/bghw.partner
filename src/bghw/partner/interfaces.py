@@ -136,6 +136,12 @@ class IPartnerSearch(Interface):
         constraint = validatePLZ
     )
 
+    strhnr = schema.TextLine(
+        title=_(u'Strasse und Hausnummer des Kunden'),
+        required=False
+    )
+   
+
     umkreis = schema.Choice(
         title=_(u'Angabe zur Umkreissuche'),
         vocabulary=umkreise,
@@ -154,6 +160,14 @@ class IPartnerSearch(Interface):
         vocabulary=umkreise,
         required=True,
     )
+
+    @invariant
+    def validateGeoData(data):
+        if data.strhnr is not None and data.plz is not None:
+            location = '%s, %s, Deutschland' %(data.strhnr, data.plz)
+            latlong = geolocator.geocode(location, addressdetails=True, timeout=10)
+            if not latlong:
+                raise NoGeoLocation(u"Für diese Adresse kann keine Geolocation ermittelt werden.")
 
 class IPartnerWordSearch(Interface):
 
