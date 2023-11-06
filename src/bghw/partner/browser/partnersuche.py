@@ -99,7 +99,10 @@ class PartnerSearch(api.Form):
             distance = great_circle(location, partner).km
             if data.get('umkreis') != 'alle':
                 if distance <= data.get('umkreis'):
-                    obj = i.getObject()
+                    try:
+                        obj = i.getObject()
+                    except:
+                        continue
                     entry['title'] = obj.title
                     entry['id'] = obj.UID()
                     entry['url'] = obj.absolute_url()
@@ -117,6 +120,10 @@ class PartnerSearch(api.Form):
                     geolocations.append(geolocation)
 
             else:
+                try:
+                    obj = i.getObject()
+                except:
+                    continue
                 obj = i.getObject()
                 entry['title'] = obj.title
                 entry['id'] = obj.UID()
