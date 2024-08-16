@@ -78,7 +78,7 @@ class PartnerSearch(api.Form):
         data, errors = self.extractData()
         if errors:
             return
-        brains = ploneapi.content.find(portal_typ='Partner', art=data.get('art'))
+        brains = ploneapi.content.find(path='/inwiportal/inwi-rul/sonstige-dateien/netzwerkpartner', portal_typ='Partner', art=data.get('art'))
         self.partners = []
         adresse = "%s, Deutschland" % data.get('plz')
         if data.get('strhnr'):
@@ -93,6 +93,7 @@ class PartnerSearch(api.Form):
                        "color": '#555555'}
             geolocations = [geolocation]
         session = ISession(self.request)
+        uids = []
         for i in brains:
             entry = {}
             partner = (i.latitude, i.longitude)
@@ -112,12 +113,14 @@ class PartnerSearch(api.Form):
                     entry['distance'] = distance
                     entry['printdistance'] = int(round(distance))
                     entry['zusatzinfos'] = obj.zusatzinfos
-                    self.partners.append(entry)
-                    geolocation = {"title": obj.title,
-                        "lon": i.longitude,
-                        "lat": i.latitude,
-                        "color": '#004994'}
-                    geolocations.append(geolocation)
+                    if obj.UID() not in uids:
+                        uids.append(obj.UID())
+                        self.partners.append(entry)
+                        geolocation = {"title": obj.title,
+                            "lon": i.longitude,
+                            "lat": i.latitude,
+                            "color": '#004994'}
+                        geolocations.append(geolocation)
 
             else:
                 try:
@@ -134,12 +137,14 @@ class PartnerSearch(api.Form):
                 entry['distance'] = distance
                 entry['printdistance'] = int(round(distance))
                 entry['zusatzinfos'] = obj.zusatzinfos
-                self.partners.append(entry)
-                geolocation = {"title": obj.title,
-                       "lon": i.longitude,
-                       "lat": i.latitude,
-                       "color": '#004994'}
-                geolocations.append(geolocation)
+                if obj.UID() not in uids:
+                    uids.append(obj.UID())
+                    self.partners.append(entry)
+                    geolocation = {"title": obj.title,
+                        "lon": i.longitude,
+                        "lat": i.latitude,
+                        "color": '#004994'}
+                    geolocations.append(geolocation)
 
         if self.partners:
             self.partners = sorted(self.partners, key=itemgetter('distance'))
