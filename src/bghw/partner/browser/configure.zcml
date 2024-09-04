@@ -17,10 +17,39 @@
     name="bghw.partner"
     directory="static" />
 
-  <browser:page
+  <!--<browser:page
     name="locations"
     for="*"
     class=".locations.Locations"
+    permission="zope2.View"
+    />-->
+
+  <browser:page
+    name="reindexpartner"
+    for="*"
+    class=".indexpartner.reindexPartner"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="partnerview"
+    for="*"
+    class=".partnerview.Partnerview"
+    permission="zope2.View"
+    template="templates/partnerview.pt"
+    />
+
+  <browser:page
+    name="partnersearch"
+    for="*"
+    class=".partnersuche.partnersearchform"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="partnerwordsearch"
+    for="*"
+    class=".partnersuche.PartnerWordSearch"
     permission="zope2.View"
     />
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
+import os
 from zope.interface import Interface
-from uvc.api import api
 from plone import api as ploneapi
 from bghw.partner.interfaces import IPartnerSearch, IPartnerWordSearch, spezialgebiete, kontaktarten
 from geopy.geocoders import Nominatim
@@ -8,10 +8,15 @@ from geopy.distance import geodesic
 from geopy.distance import great_circle
 from operator import itemgetter
 from collective.beaker.interfaces import ISession
+from plone.autoform.form import AutoExtensibleForm
+from z3c.form import button, form
+from zope.interface import Interface
+import plone.z3cform.layout
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
+module_dir = os.path.dirname(os.path.abspath(__file__))
+module_dir = f'{module_dir}/templates/'
 geolocator = Nominatim(user_agent="bghw.partner")
-
-api.templatedir('templates')
 
 def getGlyph(value):
     glyphdict = {
@@ -32,25 +37,24 @@ def getGlyph(value):
     if value:
         return glyphdict.get(value)
 
-class PartnerSearch(api.Form):
-    api.context(Interface)
+class PartnerSearch(AutoExtensibleForm, form.EditForm):
+    schema = IPartnerSearch
+    ignoreContext = True
+
     label = u'Suche in der Partnerdatenbank'
-    fields = api.Fields(IPartnerSearch)
-    fields['plz'].htmlAttributes['maxlength'] = 5
-    fields['plz'].htmlAttributes['size'] = 6
+    description = u"Test"
+    #fields = api.Fields(IPartnerSearch)
+    #fields['plz'].htmlAttributes['maxlength'] = 5
+    #fields['plz'].htmlAttributes['size'] = 6
 
-    ignoreContent = False
 
-    def update(self):
-        #self.portal_type = ''
-        self.message = ''
-        self.headimage = ''
+    def get_image(self):
         if self.context.image:
-            self.headimage = "%s/@@images/image/large" %self.context.absolute_url()
-        self.formurl = self.context.absolute_url()
-        self.altformurl = self.context.absolute_url() + '/partnerwordsearch'
-        if not hasattr(self, 'partners'):
-            self.partners = []
+            return "%s/@@images/image/large" %self.context.absolute_url()
+        return ''
+
+    def get_altformurl(self):
+        return self.context.absolute_url() + '/partnerwordsearch'
 
     def createKontaktinfos(self, obj):
         kontaktinfos = []
@@ -73,7 +77,7 @@ class PartnerSearch(api.Form):
                                                        i.get('bemerkung')))
         return kontaktinfos 
 
-    @api.action('Suchen')
+    @button.buttonAndHandler("Suchen")
     def handle_search(self):
         data, errors = self.extractData()
         if errors:
@@ -156,22 +160,22 @@ class PartnerSearch(api.Form):
         session['geodata'] = geolocations
         session.save()
 
-class PartnerWordSearch(api.Form):
-    api.context(Interface)
+partnertemplate = os.path.join(module_dir, 'partnersearch.pt')
+partnersearchform = plone.z3cform.layout.wrap_form(PartnerSearch, index=ViewPageTemplateFile(partnertemplate))
+
+class PartnerWordSearch(AutoExtensibleForm, form.EditForm):
+    schema = IPartnerWordSearch
+    ignoreContext = True
+
     label = u'Suche in der Partnerdatenbank'
-    fields = api.Fields(IPartnerWordSearch)
 
-    ignoreContent = False
-
-    def update(self):
-        self.message = ''
-        self.headimage = ''
+    def get_image(self):
         if self.context.image:
-            self.headimage = "%s/@@images/image/large" %self.context.absolute_url()
-        self.formurl = self.context.absolute_url() + '/partnerwordsearch'
-        self.altformurl = self.context.absolute_url()
-        if not hasattr(self, 'partners'):
-            self.partners = []
+            return "%s/@@images/image/large" %self.context.absolute_url()
+        return ''
+
+    def get_altformurl(self):
+        return self.context.absolute_url()
 
     def createKontaktinfos(self, obj):
         kontaktinfos = []
@@ -195,7 +199,7 @@ class PartnerWordSearch(api.Form):
         return kontaktinfos
 
 
-    @api.action('Suchen')
+    @button.buttonAndHandler("Suchen")
     def handle_search(self):
         data, errors = self.extractData()
         if errors:
@@ -224,5 +228,3 @@ class PartnerWordSearch(api.Form):
         else:
             self.message = u'Leider konnten für Ihre Angaben keine Netzwerkpartner gefunden werden. Bitte ändern Sie gegebenenfalls Ihre Angaben und\
                            versuchen es dann erneut.'
-            #ploneapi.portal.show_message(self.message, self.request, type="error")
-            #return self.response.redirect(self.formurl)

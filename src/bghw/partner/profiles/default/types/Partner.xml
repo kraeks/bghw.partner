@@ -42,7 +42,6 @@
     <element value="plone.app.dexterity.behaviors.metadata.IPublication" />
     <element value="plone.app.relationfield.behavior.IRelatedItems" />
     <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion" />
-    <element value="collective.geo.behaviour.interfaces.ICoordinates" />
   </property>
 
   <!-- View information -->

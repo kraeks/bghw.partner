@@ -1,9 +1,8 @@
 from zope.interface import Interface
 from bghw.partner.interfaces import IPartner, spezialgebiete, kontaktarten
-from uvc.api import api
 from plone import api as ploneapi
+from Products.Five.browser import BrowserView
 
-api.templatedir('templates')
 
 def getGlyph(value):
     glyphdict = {
@@ -24,10 +23,9 @@ def getGlyph(value):
     if value:
         return glyphdict.get(value)
 
-class Partnerview(api.Page):
-    api.context(IPartner)
+class Partnerview(BrowserView):
 
-    def update(self):
+    def __call__(self):
         self.art = ''
         if self.context.art:
             partnertitel = []
@@ -64,3 +62,4 @@ class Partnerview(api.Page):
                                                    kontaktarten.getTerm(i.get('kontaktart')).title,
                                                    wert,
                                                    i.get('bemerkung')))
+        return self.index()
