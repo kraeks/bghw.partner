@@ -7,12 +7,12 @@ from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 from geopy.distance import great_circle
 from operator import itemgetter
-from collective.beaker.interfaces import ISession
 from plone.autoform.form import AutoExtensibleForm
 from z3c.form import button, form
 from zope.interface import Interface
 import plone.z3cform.layout
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+import json
 
 module_dir = os.path.dirname(os.path.abspath(__file__))
 module_dir = f'{module_dir}/templates/'
@@ -40,21 +40,10 @@ def getGlyph(value):
 class PartnerSearch(AutoExtensibleForm, form.EditForm):
     schema = IPartnerSearch
     ignoreContext = True
+    partners = None
+    geolocations = None
 
     label = u'Suche in der Partnerdatenbank'
-    description = u"Test"
-    #fields = api.Fields(IPartnerSearch)
-    #fields['plz'].htmlAttributes['maxlength'] = 5
-    #fields['plz'].htmlAttributes['size'] = 6
-
-
-    def get_image(self):
-        if self.context.image:
-            return "%s/@@images/image/large" %self.context.absolute_url()
-        return ''
-
-    def get_altformurl(self):
-        return self.context.absolute_url() + '/partnerwordsearch'
 
     def createKontaktinfos(self, obj):
         kontaktinfos = []
@@ -75,10 +64,10 @@ class PartnerSearch(AutoExtensibleForm, form.EditForm):
                                                        kontaktarten.getTerm(i.get('kontaktart')).title,
                                                        wert,
                                                        i.get('bemerkung')))
-        return kontaktinfos 
+        return kontaktinfos
 
     @button.buttonAndHandler("Suchen")
-    def handle_search(self):
+    def handle_search(self, action):
         data, errors = self.extractData()
         if errors:
             return
@@ -96,7 +85,6 @@ class PartnerSearch(AutoExtensibleForm, form.EditForm):
                        "lat": location[0],
                        "color": '#555555'}
             geolocations = [geolocation]
-        session = ISession(self.request)
         uids = []
         for i in brains:
             entry = {}
@@ -150,15 +138,13 @@ class PartnerSearch(AutoExtensibleForm, form.EditForm):
                         "color": '#004994'}
                     geolocations.append(geolocation)
 
+        self.geolocations = json.dumps(geolocations)
         if self.partners:
             self.partners = sorted(self.partners, key=itemgetter('distance'))
+            print(self.partners)
         else:
             self.message = u'Leider konnten für Ihre Angaben keine Netzwerkpartner gefunden werden. Bitte ändern Sie gegebenenfalls Ihre Angaben\
                             und versuchen es dann erneut.'
-            #ploneapi.portal.show_message(self.message, self.request, type="error")
-            #return self.response.redirect(self.formurl)
-        session['geodata'] = geolocations
-        session.save()
 
 partnertemplate = os.path.join(module_dir, 'partnersearch.pt')
 partnersearchform = plone.z3cform.layout.wrap_form(PartnerSearch, index=ViewPageTemplateFile(partnertemplate))
@@ -166,16 +152,9 @@ partnersearchform = plone.z3cform.layout.wrap_form(PartnerSearch, index=ViewPage
 class PartnerWordSearch(AutoExtensibleForm, form.EditForm):
     schema = IPartnerWordSearch
     ignoreContext = True
+    partners = None
 
     label = u'Suche in der Partnerdatenbank'
-
-    def get_image(self):
-        if self.context.image:
-            return "%s/@@images/image/large" %self.context.absolute_url()
-        return ''
-
-    def get_altformurl(self):
-        return self.context.absolute_url()
 
     def createKontaktinfos(self, obj):
         kontaktinfos = []
@@ -198,9 +177,8 @@ class PartnerWordSearch(AutoExtensibleForm, form.EditForm):
                                                        i.get('bemerkung')))
         return kontaktinfos
 
-
     @button.buttonAndHandler("Suchen")
-    def handle_search(self):
+    def handle_search(self, action):
         data, errors = self.extractData()
         if errors:
             return
@@ -228,3 +206,6 @@ class PartnerWordSearch(AutoExtensibleForm, form.EditForm):
         else:
             self.message = u'Leider konnten für Ihre Angaben keine Netzwerkpartner gefunden werden. Bitte ändern Sie gegebenenfalls Ihre Angaben und\
                            versuchen es dann erneut.'
+
+partnerwordtemplate = os.path.join(module_dir, 'partnerwordsearch.pt')
+partnerwordsearchform = plone.z3cform.layout.wrap_form(PartnerWordSearch, index=ViewPageTemplateFile(partnerwordtemplate))
