@@ -55,12 +55,8 @@
             </div>
           </div>
 
-          <div class="card">
+          <div tal:define="navroot context/@@plone_portal_state/navigation_root_url" tal:condition="view/form_instance/partners" class="card mt-3">
             <custom-osm style="width:100%; height:400px; display:block;" locations="${view/form_instance/geolocations}"/>
-          </div>
-
-          <div tal:condition="view/form_instance/partners" tal:define="navroot context/@@plone_portal_state/navigation_root_url">
-            <div style="height:600px;width:100%" id="olmap"></div>
             <script tal:attributes="src string:${navroot}/++resource++bghw.partner/dist.js"></script>
           </div>
 
