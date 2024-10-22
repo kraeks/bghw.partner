@@ -6,6 +6,8 @@ from Products.CMFCore.utils import getToolByName
 from plone.autoform.form import AutoExtensibleForm
 from z3c.form import button, form
 
+#TODO: Prüfen, ob dieses Modul noch benötigt wird.
+
 def getlatlong(address):
     geolocator = Nominatim()
     location = geolocator.geocode(address)
@@ -16,7 +18,7 @@ def getdistance(loc1, loc2):
 
 
 
-class PartnerSuche(AutoExtensibleForm, form.EditForm)):
+class PartnerSuche(AutoExtensibleForm, form.EditForm):
     schema = IPartnerSearch
     ignoreContext = True
 
