@@ -1,9 +1,10 @@
 from geopy.geocoders import Nominatim
 from geopy.distance import vincenty
 from zope.interface import Interface
-from uvc.api import api
 from bghw.partner.interfaces import IPartnerSearch
 from Products.CMFCore.utils import getToolByName
+from plone.autoform.form import AutoExtensibleForm
+from z3c.form import button, form
 
 def getlatlong(address):
     geolocator = Nominatim()
@@ -13,15 +14,17 @@ def getlatlong(address):
 def getdistance(loc1, loc2):
     return vincenty(loc1, loc2).km
 
-class PartnerSuche(api.Form):
-    api.context(Interface)
-    fields = api.Fields(IPartnerSearch)
+
+
+class PartnerSuche(AutoExtensibleForm, form.EditForm)):
+    schema = IPartnerSearch
+    ignoreContext = True
 
     @property
     def portal_catalog(self):
         return getToolByName(self.context, 'portal_catalog')
 
-    @api.action('Suchen')
+    @button.buttonAndHandler("Suchen")
     def handle_send(self):
         data, errors = self.extractData()
         if errors:
@@ -33,11 +36,3 @@ class PartnerSuche(api.Form):
         partner = '%s %s %s' %(myobj.strhnr, myobj.plz, myobj.ort)
         partnercoordinates = getlatlong(partner)
         distance = getdistance(partnercoordinates, versichertencoordinates)
-        print distance
-        import pdb;pdb.set_trace()
-        #send_mail()
-
-#    @api.action('Abbrechen')
-#    def handel_cancel(self):
-#        return self.redirect(self.application_url())
-

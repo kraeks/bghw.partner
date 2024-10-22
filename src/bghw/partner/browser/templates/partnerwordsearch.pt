@@ -1,125 +1,77 @@
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:metal="http://xml.zope.org/namespaces/metal"
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-      i18n:domain="example.dexterityforms"
-      metal:use-macro="context/main_template/macros/master">
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="example.conference">
+<body>
 
-    <metal:block fill-slot="main">
+<metal:main fill-slot="main">
+    <tal:main-macro metal:define-macro="main">
 
-    <div class="row" tal:condition="view/headimage">
-        <img class="img-responsive" src="" tal:attributes="src view/headimage">
-    </div>
+    <div class="container">
 
-    <div class="row" tal:content="structure provider:plone.abovecontenttitle"/>
+      <div class="row">
+        <span class="col-sm12 col-12" tal:content="structure provider:plone.abovecontenttitle" />
+      </div>
 
-        <h1 class="documentFirstHeading" tal:content="view/label | nothing" />
 
-        <div id="content-core">
+      <div class="row">
+        <div class="col-lg-9 col-12">
 
-    <div class="row">
+          <h1 tal:content="view/label"/>
 
-      <!--<h2>Erweitertes Benutzerprofil ändern</h2>-->
-      <!--<p class="documentDescription">Hier steht noch ein Text zur Merkliste...</p>-->
+          <ul class="nav nav-tabs mb-3">
+             <li role="presentation" class="nav-item"><a class="nav-link" href="#" tal:attributes="href context/absolute_url">nach Postleitzahl</a></li>
+             <li role="presentation" class="nav-item"><a class="nav-link active" href="#" tal:attributes="href python:context.absolute_url()+'/partnerwordsearch'">nach Suchbegriff</a></li>
+          </ul>
 
-      <ul class="nav nav-tabs">
-        <li role="presentation"><a href="#" tal:attributes="href view/altformurl">nach Postleitzahl</a></li>
-        <li role="presentation" class="active"><a href="#" tal:attributes="href view/formurl">nach Suchbegriff</a></li>
-      </ul>
+          <div tal:replace="structure view/contents" />
 
-            <form style="margin-left:10px" enctype="multipart/form-data" method="post" novalidate="novalidate"
-                  action="." tal:attributes="action view/formurl">
-
-                 <div tal:define="widget python: view.fieldWidgets.get('form.field.begriff')">
-                   <div metal:use-macro="here/@@formmacros/macros/bootstrapfields" />
-                 </div>
-
-                 <div tal:define="widget python: view.fieldWidgets.get('form.field.art')">
-                   <div metal:use-macro="here/@@formmacros/macros/bootstrapfields" />
-                 </div>
-
-                 <div class="actions">
-                   <span class="action" tal:repeat="widget view/actionWidgets">
-                     <tal:widget tal:content="structure widget/render" />
-                   </span>
-                 </div>
-            </form>
-    </div>
-
-    <!--<div class="row" tal:condition="not: view/partners">
-      <p>Für die angegebenen Suchkriterien wurde kein Netzwerkpartner gefunden. Bitte versuchen Sie, bei der Umkreissuche
-         "alle anzeigen" auszuwählen.</p>
-    </div>-->
-
-    <p class="documentDescription" tal:condition="view/message" tal:content="view/message"/>
-
-    <div class="row" tal:condition="view/partners">
-
-        <table class="table table-striped">
-          <thead>
-            <th>Titel</th>
-            <th>Ort</th>
-            <th>Kontakt</th>
-            <th>Partnerart</th>
-          <thead>
-          <tbody>
-            <tr tal:repeat="partner view/partners">
-              <!--<td><a href="#" data-toggle="modal" tal:attributes="data-target string:.${partner/id}" 
-               tal:content="python: partner.get('title')"/></td>-->
-              <td><a href="#" tal:attributes="href partner/url" tal:content="python: partner.get('title')"/></td>
-              <td><span tal:content="string:${partner/plz} ${partner/ort}"/></td>
-              <td><div tal:repeat="mykontakt partner/kontakt">
-                        <span tal:condition="python: mykontakt[0]" class="" title="" tal:attributes="class python:mykontakt[0];
-                                                                                                     title python:mykontakt[1]"/>
-                        <span tal:content="structure python: mykontakt[2]"/>
-                      </div>
-                  
-              </td>
-              <td><span tal:content="partner/partnerarten"/></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div tal:repeat="partner view/partners" tal:attributes="class string:modal fade ${partner/id}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
-          <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-
-		<div class="modal-header">
-		  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
-                  <h2 style="margin-left:5px" tal:content="python: partner.get('title')"/>
-		</div>
-		<div class="modal-body">
-
-		<table class="table table-verticallisting">
-		  <tbody>
-                  <p>Hier muss noch die Ausgabe der Details implementiert werden</p>
-		  <!--<tr><th>Abteilung</th><td tal:content="python: member.get('abteilung')"/></tr>
-		  <tr><th>Position</th><td tal:content="python: member.get('position')"/></tr>
-		  <tr><th>Verwaltung</th><td tal:content="python: member.get('firma')"/></tr>
-		  <tr><th>Raum</th><td tal:content="python: member.get('raum')"/></tr>
-		  <tr><th>Ort</th><td><span tal:content="python: member.get('plz')"/> <span tal:content="python: member.get('ort')"/></td></tr>
-		  <tr><th>Strasse</th><td tal:content="python: member.get('strasse')"/></tr>
-		  <tr><th>E-Mail</th><td tal:content="python: member.get('email')"/></tr>
-		  <tr><th>Telefon</th><td tal:content="python: member.get('telefon')"/></tr>
-		  <tr><th>Durchwahl</th><td tal:content="python: member.get('durchwahl')"/></tr>
-		  <tr><th>Mobil</th><td tal:content="python: member.get('handy')"/></tr>
-		  <tr><th>Fax</th><td tal:content="python: member.get('fax')"/></tr>-->
-		  </tbody>
-		</table>
-                </div>
-
+          <div class="mt-4" tal:define="partners view/form_instance/partners" tal:condition="partners">
+            <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <th>Partner</th>
+                <th>Kontakt</th>
+                <th>Partnerart</th>
+              </thead>
+              <tbody>
+                <tr tal:repeat="partner partners">
+                  <td><a class="small" href="${partner/url}">${partner/title}</a><br/><span class="small">${partner/plz} ${partner/ort}</span></td>
+                  <td>
+                    <div tal:repeat="mykontakt partner/kontakt">
+                        <span tal:condition="python: mykontakt[0]" tal:attributes="class python:'small '+mykontakt[0]; title python:mykontakt[1]"/>
+                        <span class="small" tal:content="structure python: mykontakt[2]"/><br/>
+                     </div>
+                  </td>
+                  <td class="small">${partner/partnerarten}</td>
+                </tr>
+              </tbody>
+            </table>
+            </div>
           </div>
+
+        </div> <!-- content col -->
+
+        <!-- Portlets -->
+        <div class="col-lg-3 col-12">
+          <div tal:replace="structure context/@@portlet-cards-view"/>
         </div>
-        </div>
+        <!-- Ende Portlets -->
+
+      </div> <!-- row -->
 
 
-     </div>
+      <div class="row">
+        <span class="col-lg-9 col-12" tal:content="structure provider:plone.belowcontentbody" />
+      </div>
 
+    </div><!-- container --> 
 
-        </div>
+    </tal:main-macro>
+</metal:main>
 
-    <div class="row" tal:content="structure provider:plone.belowcontentbody"/>
-
-    </metal:block>
-
+</body>
 </html>

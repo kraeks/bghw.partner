@@ -1,0 +1,140 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="example.dexterityforms"
+      metal:use-macro="context/main_template/macros/master">
+
+    <metal:block fill-slot="main">
+
+        <h1 class="documentFirstHeading" tal:content="view/label | nothing" />
+
+        <div id="content-core">
+
+    <div class="row">
+
+      <!--<h2>Erweitertes Benutzerprofil ändern</h2>-->
+      <!--<p class="documentDescription">Hier steht noch ein Text zur Merkliste...</p>-->
+
+      <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="#" tal:attributes="href view/formurl">nach Postleitzahl</a></li>
+        <li role="presentation"><a href="#" tal:attributes="href view/altformurl">nach Suchbegriff</a></li>
+      </ul>
+
+
+            <form style="margin-left:10px" enctype="multipart/form-data" method="post" novalidate="novalidate"
+                  action="." tal:attributes="action view/formurl">
+
+                 <div tal:define="widget python: view.fieldWidgets.get('form.field.plz')">
+                   <div metal:use-macro="here/@@formmacros/macros/bootstrapfields" />
+                 </div>
+
+                 <div tal:define="widget python: view.fieldWidgets.get('form.field.strhnr')">
+                   <div metal:use-macro="here/@@formmacros/macros/bootstrapfields" />
+                 </div>
+
+                 <div tal:define="widget python: view.fieldWidgets.get('form.field.umkreis')">
+                   <div metal:use-macro="here/@@formmacros/macros/bootstrapfields" />
+                 </div>
+
+                 <div tal:define="widget python: view.fieldWidgets.get('form.field.art')">
+                   <div metal:use-macro="here/@@formmacros/macros/bootstrapfields" />
+                 </div>
+
+                 <div class="actions">
+                   <span class="action" tal:repeat="widget view/actionWidgets">
+                     <tal:widget tal:content="structure widget/render" />
+                   </span>
+                 </div>
+            </form>
+    </div>
+
+    <!--<div class="row" tal:condition="not: view/partners">
+      <p>Für die angegebenen Suchkriterien wurde kein Netzwerkpartner gefunden. Bitte versuchen Sie, bei der Umkreissuche
+         "alle anzeigen" auszuwählen.</p>
+    </div>-->
+
+    <p tal:condition="view/message" class="documentDescription" tal:content="view/message"/>
+
+    <div class="row" tal:condition="view/partners">
+
+        <table class="table table-striped">
+          <thead>
+            <th>Titel</th>
+            <th>Ort</th>
+            <th>Kontakt</th>
+            <th>Entfernung</th>
+            <th>Zusatzinfos</th>
+          <thead>
+          <tbody>
+            <tr tal:repeat="partner view/partners">
+              <!--<td><a href="#" data-toggle="modal" tal:attributes="data-target string:.${partner/id}" 
+               tal:content="python: partner.get('title')"/></td>-->
+              <td><a href="#" tal:attributes="href partner/url" tal:content="python: partner.get('title')"/></td>
+              <td><span tal:content="string:${partner/plz} ${partner/ort}"/></td>
+              <td><div tal:repeat="mykontakt partner/kontakt">
+                        <span tal:condition="python: mykontakt[0]" class="" title="" tal:attributes="class python:mykontakt[0];
+                                                                                                     title python:mykontakt[1]"/>
+                        <span tal:content="structure python: mykontakt[2]"/><br/>
+                      </div>
+                  
+              </td>
+              <td><span tal:content="partner/printdistance"/> km</td>
+              <td><p tal:repeat="info partner/zusatzinfos" tal:content="info"/></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div tal:condition="view/partners" tal:define="navroot context/@@plone_portal_state/navigation_root_url">
+          <div style="height:600px;width:100%" id="olmap"></div>
+          <script tal:attributes="src string:${navroot}/++resource++bghw.partner/dist.js"></script>
+        </div>
+
+        <div tal:repeat="partner view/partners" tal:attributes="class string:modal fade ${partner/id}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+
+		<div class="modal-header">
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
+                  <h2 style="margin-left:5px" tal:content="python: partner.get('title')"/>
+		</div>
+		<div class="modal-body">
+
+		<table class="table table-verticallisting">
+		  <tbody>
+                  <p>Hier muss noch die Ausgabe der Details implementiert werden</p>
+		  <!--<tr><th>Abteilung</th><td tal:content="python: member.get('abteilung')"/></tr>
+		  <tr><th>Position</th><td tal:content="python: member.get('position')"/></tr>
+		  <tr><th>Verwaltung</th><td tal:content="python: member.get('firma')"/></tr>
+		  <tr><th>Raum</th><td tal:content="python: member.get('raum')"/></tr>
+		  <tr><th>Ort</th><td><span tal:content="python: member.get('plz')"/> <span tal:content="python: member.get('ort')"/></td></tr>
+		  <tr><th>Strasse</th><td tal:content="python: member.get('strasse')"/></tr>
+		  <tr><th>E-Mail</th><td tal:content="python: member.get('email')"/></tr>
+		  <tr><th>Telefon</th><td tal:content="python: member.get('telefon')"/></tr>
+		  <tr><th>Durchwahl</th><td tal:content="python: member.get('durchwahl')"/></tr>
+		  <tr><th>Mobil</th><td tal:content="python: member.get('handy')"/></tr>
+		  <tr><th>Fax</th><td tal:content="python: member.get('fax')"/></tr>-->
+		  </tbody>
+		</table>
+                </div>
+
+          </div>
+        </div>
+        </div>
+
+
+     </div>
+
+        </div>
+
+    <div class="row" tal:content="structure provider:plone.belowcontentbody"/>
+
+    <script>
+      $( document ).ready(function() {
+        $('.ol-viewport:eq(1)').hide();
+      });
+    </script>
+
+    </metal:block>
+
+</html>

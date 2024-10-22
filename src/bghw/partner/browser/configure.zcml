@@ -18,9 +18,31 @@
     directory="static" />
 
   <browser:page
-    name="locations"
+    name="reindexpartner"
     for="*"
-    class=".locations.Locations"
+    class=".indexpartner.reindexPartner"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="partnerview"
+    for="*"
+    class=".partnerview.Partnerview"
+    permission="zope2.View"
+    template="templates/partnerview.pt"
+    />
+
+  <browser:page
+    name="partnersearch"
+    for="*"
+    class=".partnersuche.partnersearchform"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="partnerwordsearch"
+    for="*"
+    class=".partnersuche.partnerwordsearchform"
     permission="zope2.View"
     />
 

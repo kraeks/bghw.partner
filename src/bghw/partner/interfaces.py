@@ -4,23 +4,22 @@
 from bghw.partner import _
 from zope import schema
 from zope.interface import Interface
-from plone.directives import form
+from plone.supermodel import model
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield import DictRow
 from plone.app.textfield import RichText
 from plone.indexer import indexer
-from plone.directives import form
+from plone.autoform.directives import widget
 from collective.z3cform.datagridfield import DictRow, DataGridFieldFactory
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
-from z3c.form.interfaces import IEditForm, IAddForm
+#from z3c.form.interfaces import IEditForm, IAddForm
 from z3c.form import field
 from geopy.geocoders import Nominatim
-from uvc.validation import validatePLZ
 from zope.schema import ValidationError
 from zope.interface import invariant, Invalid
-from plone.dexterity.browser import edit, add
+#from plone.dexterity.browser import edit, add
 from time import sleep
 from plone import api as ploneapi
 
@@ -118,7 +117,7 @@ kontaktarten = SimpleVocabulary((
     SimpleTerm(u'www', u'www', u'WWW'),
     ))
 
-class IKontaktOptions(form.Schema):
+class IKontaktOptions(model.Schema):
     kontaktart = schema.Choice(title=u"Kontaktart",
                                source=kontaktarten,
                                required=True)
@@ -133,7 +132,6 @@ class IPartnerSearch(Interface):
     plz = schema.TextLine(
         title=_(u'Postleitzahl'),
         required=True,
-        constraint = validatePLZ
     )
 
     strhnr = schema.TextLine(
@@ -226,18 +224,12 @@ class IPartner(Interface):
         required=True,
     )
 
-    #description = schema.Text(
-    #    title=_(u'Beschreibung'),
-    #    description=_(u'Hier können Sie die Leistungen des Netzwerkpartners kurz\
-    #                  beschreiben, z.B.: Spezialist im Bereich Schmerztherapie'),
-    #    required=False,
-    #)
-
     art = schema.List(
         title=_(u'Art des Netzwerkpartners'),
         value_type = schema.Choice(vocabulary=spezialgebiete),
         required=True,
     )
+    widget(art=CheckBoxFieldWidget)
 
     ik = schema.TextLine(
         title=_(u'Institutionskennzeichen'),
@@ -263,36 +255,7 @@ class IPartner(Interface):
                                        description=u"Bitte tragen Sie hier die Kontaktinformationen zum Netzwerkpartner ein.",
                                        value_type=DictRow(title=u"Kontaktliste", schema=IKontaktOptions),
                                        required=False)
-
-    www = schema.URI(
-        title=_(u'Weblink/Homepage'),
-        description=_(u'Achtung veraltet, bitte ins Feld Kontaktinformationen übernehmen und speichern'),
-        required=False,
-    )
-
-    telefon = schema.TextLine(
-        title=_(u'Telefon'),
-        description=_(u'Achtung veraltet, bitte ins Feld Kontaktinformationen übernehmen und speichern'),
-        required=False,
-    )
-
-    mobil = schema.TextLine(
-        title=_(u'Mobiltelefon'),
-        description=_(u'Achtung veraltet, bitte ins Feld Kontaktinformationen übernehmen und speichern'),
-        required=False,
-    )
-
-    telefax = schema.TextLine(
-        title=_(u'Telefax'),
-        description=_(u'Achtung veraltet, bitte ins Feld Kontaktinformationen übernehmen und speichern'),
-        required=False,
-    )
-
-    email = schema.TextLine(
-        title=_(u'eMail Adresse'),
-        description=_(u'Achtung veraltet, bitte ins Feld Kontaktinformationen übernehmen und speichern'),
-        required=False,
-    )
+    widget(kontaktinformationen=DataGridFieldFactory)
 
     oeffnungszeiten = schema.List(
         title=u'Liste der Öffnungszeiten und/oder Gesprächstermine',
@@ -326,20 +289,20 @@ class IPartner(Interface):
         required=False,
     )
 
-    @invariant
-    def validateGeoData(data):
-        if data.strhnr is not None and data.plz is not None and data.ort is not None:
-            location = '%s, Deutschland' %(data.plz)
-            latlong = geolocator.geocode(location, addressdetails=True, timeout=10)
-            if not latlong:
-                location = '%s, %s, Deutschland' %(data.strhnr, data.ort)
-                latlong = geolocator.geocode(location, addressdetails=True, timeout=10)
-            if not latlong:
-                raise NoGeoLocation(u"Für diese Adresse kann keine Geolocation ermittelt werden.")
-            plz = latlong.raw['address']['postcode']
-            meldung = u'Für Ihre Adresse wurde eine Geolocation mit der PLZ: %s ermittelt. Diese stimmt nicht mit der angegebenen PLZ überein.' % plz
-            if plz != data.plz:
-                raise NoGeoLocation(meldung)
+    #@invariant
+    #def validateGeoData(data):
+    #    if data.strhnr is not None and data.plz is not None and data.ort is not None:
+    #        location = '%s, Deutschland' %(data.plz)
+    #        latlong = geolocator.geocode(location, addressdetails=True, timeout=10)
+    #        if not latlong:
+    #            location = '%s, %s, Deutschland' %(data.strhnr, data.ort)
+    #            latlong = geolocator.geocode(location, addressdetails=True, timeout=10)
+    #        if not latlong:
+    #            raise NoGeoLocation(u"Für diese Adresse kann keine Geolocation ermittelt werden.")
+    #        plz = latlong.raw['address']['postcode']
+    #        meldung = u'Für Ihre Adresse wurde eine Geolocation mit der PLZ: %s ermittelt. Diese stimmt nicht mit der angegebenen PLZ überein.' % plz
+    #        if plz != data.plz:
+    #            raise NoGeoLocation(meldung)
             
 
 class IPartnerOrdner(Interface):
@@ -379,6 +342,7 @@ def suchbegriffIndexer(obj):
     if not wordlist:
         return ""
     suchstring = u' '.join(wordlist)
+    print(suchstring)
     return suchstring
 
 @indexer(IPartner)
@@ -389,7 +353,6 @@ def latitudeIndexer(obj):
     if brains:
         brain = brains[0]
         if brain.latitude:
-            print 'Aufruf Latitude gespart'
             return brain.latitude
     ####
     location = '%s, Deutschland' %(obj.plz)
@@ -398,15 +361,9 @@ def latitudeIndexer(obj):
         location = '%s, %s, Deutschland' %(obj.strhnr, obj.ort)
         latlong = geolocator.geocode(location, addressdetails=True, timeout=10)
     if not latlong:
-        print 'Fehler bei der Indexierung'
-        print obj.title
         return
-    #if latlong.raw['address']['postcode'][:3] != obj.plz[:3]:
-    #    print u'Fehler bei der Aufloesung der Adresse'
-    #    print obj.title
-    #    return
-    print '%s wurde indexiert' %obj.title
     sleep(1)
+    print(latlong.latitude)
     return latlong.latitude
 
 @indexer(IPartner)
@@ -417,7 +374,6 @@ def longitudeIndexer(obj):
     if brains:
         brain = brains[0]
         if brain.longitude:
-            print 'Aufruf Longitude gespart'
             return brain.longitude
     ###
     location = '%s, Deutschland' %(obj.plz)
@@ -426,33 +382,8 @@ def longitudeIndexer(obj):
         location = '%s, %s, Deutschland' %(obj.strhnr, obj.ort)
         latlong = geolocator.geocode(location, addressdetails=True, timeout=10)
     if not latlong:
-        print 'Fehler bei der Indexierung'
-        print obj.title
         return
-    #if latlong.raw['address']['postcode'][:3] != obj.plz[:3]:
-    #    print u'Fehler bei der Aufloesung der Adresse'
-    #    print obj.title
-    #    return
-    print '%s wurde indexiert' %obj.title
     sleep(1)
+    print(latlong.longitude)
     return latlong.longitude
-
-class EditForm(edit.DefaultEditForm):
-    fields = field.Fields(IPartner)
-    fields['art'].widgetFactory = CheckBoxFieldWidget
-    fields['kontaktinformationen'].widgetFactory = DataGridFieldFactory
-
-class AddForm(add.DefaultAddForm):
-    portal_type = u"Partner"
-    fields = field.Fields(IPartner)
-    fields['www'].mode = 'hidden'
-    fields['telefon'].mode = 'hidden'
-    fields['telefax'].mode = 'hidden'
-    fields['mobil'].mode = 'hidden'
-    fields['email'].mode = 'hidden'
-    fields['art'].widgetFactory = CheckBoxFieldWidget
-    fields['kontaktinformationen'].widgetFactory = DataGridFieldFactory
-
-class AddView(add.DefaultAddView):
-    form = AddForm
 

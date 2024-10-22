@@ -1,88 +1,139 @@
-<div class="row">
-  <h2 tal:content="context/title"/>
-  <p class="documentDescription" tal:content="view/art"/>
-  <h3>Anschrift und IK des Netzwerkpartners</h3> 
-  <div class="row form-group">
-    <div class="col-xs-12 col-md-8">
-    <textarea cols="40" rows="5" id="anschrift" readonly tal:content="view/anschrift"/>
-    </div>
-    <div class="col-xs-12 col-md-4">
-    <button class="btn btn-primary" onclick="myFunction()">Anschrift kopieren</button>
-    </div>
-  </div>
-  <div class="row form-group" tal:condition="context/ik">
-    <div class="col-xs-12 col-md-8">
-      <input type="text" value="" tal:attributes="value context/ik" id="iknummer" readonly>
-    </div>
-    <div class="col-xs-12 col-md-4">
-      <button class="btn btn-default" onclick="copyFunction()">IK kopieren</button>
-    </div>
-  </div>
-  <h3>Kontaktinformationen</h3>
-  <div class="row">
-    <div tal:repeat="kontakt view/kontaktinfos" class="row">
-      <div class="col-xs-1 col-md-1"></div>
-      <div class="col-xs-1 col-md-1"><span tal:attributes="class python:kontakt[0];title python:kontakt[1]"/></div>
-      <div class="col-xs-10 col-md-10"><span tal:content="structure python: kontakt[2]">
-                                       <span tal:condition="python: kontakt[3]" tal:content="python: '('+kontakt[3]+')'"/>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="example.conference">
+<body>
+
+<metal:main fill-slot="main">
+    <tal:main-macro metal:define-macro="main">
+
+    <div class="container">
+
+      <div class="row">
+        <span class="col-sm12 col-12" tal:content="structure provider:plone.abovecontenttitle" />
       </div>
-    </div>
-  </div>
 
-  <h3 tal:condition="context/oeffnungszeiten">Öffnungszeiten</h3>
-  <div tal:condition="context/oeffnungszeiten" class="row">
-    <ul>
-      <li tal:repeat="oeffnung context/oeffnungszeiten" tal:content="oeffnung"/>
-    </ul>
-  </div>
+      <div class="row">
+         <div class="col-lg-9 col-12">
+           <h1 tal:content="context/title"/>
+           <p tal:condition="view/art" class="lead mt-5">
+              <span class="dot">
+                <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+                  <defs></defs>
+                  <circle cx="250" cy="250" r="250" fill="#0063af"></circle>
+                </svg>
+              </span>
+              <span tal:content="view/art"/>
+            </p>
 
-  <h3 tal:condition="context/ansprechpartner">Ansprechpartner beim Netzwerkpartner</h3>
-  <div tal:condition="context/ansprechpartner" class="row">
-    <ul>
-      <li tal:repeat="person context/ansprechpartner" tal:content="person"/>
-    </ul>
-  </div>
 
-  <h3 tal:condition="context/bghwansprechpartner">BGHW-Ansprechpartner</h3>
-  <div tal:condition="context/bghwansprechpartner" class="row">
-    <ul>
-      <li tal:repeat="person context/bghwansprechpartner" tal:content="person"/>
-    </ul>
-  </div>
+            <h2>Anschrift und IK des Netzwerkpartners</h2> 
+            <div class="row form-group mb-4">
+              <div class="col-12 col-md-8">
+                <textarea cols="40" rows="5" id="anschrift" readonly tal:content="view/anschrift"/>
+              </div>
+              <div class="col-12 col-md-4">
+                <button class="btn btn-primary" onclick="myFunction()">Anschrift kopieren</button>
+              </div>
+            </div>
+            <div class="row form-group mb-4" tal:condition="context/ik">
+              <div class="col-12 col-md-8">
+                <input type="text" value="" tal:attributes="value context/ik" id="iknummer" readonly>
+              </div>
+              <div class="col-12 col-md-4">
+                <button class="btn btn-secondary" onclick="copyFunction()">IK kopieren</button>
+              </div>
+            </div>
 
-  <h3 tal:condition="context/zusatzinfos">Zusatzinformationen</h3>
-  <div tal:condition="context/zusatzinfos" class="row">
-    <div class="col-xs-1 col-md-1"></div>
-    <div class="col-xs-10 col-md-10">
-      <ul>
-        <li tal:repeat="info context/zusatzinfos" tal:content="info"/>
-      </ul>
-    </div>
-    <div class="col-xs-1 col-md-1"></div>
-  </div>
+           <h2>Kontaktinformationen</h2>
+           <div tal:repeat="kontakt view/kontaktinfos" class="row">
+             <div class="col-1"><span tal:attributes="class python:kontakt[0];title python:kontakt[1]"/></div>
+             <div class="col-11"><span tal:content="structure python: kontakt[2]">
+               <span tal:condition="python: kontakt[3]" tal:content="python: '('+kontakt[3]+')'"/>
+             </div>
+           </div>
 
-  <h3 tal:condition="context/bemerkungen">Bemerkungen</h3>
-  <div tal:condition="context/bemerkungen" class="row">
-    <div class="col-xs-1 col-md-1"></div>
-    <div class="col-xs-10 col-md-10">
-      <span tal:replace="structure context/bemerkungen/output"/>
-    </div>
-    <div class="col-xs-1 col-md-1"></div>
-  </div>
+           <h2 class="mt-4" tal:condition="context/oeffnungszeiten">Öffnungszeiten</h2>
+           <div tal:condition="context/oeffnungszeiten" class="row mb-4">
+             <div class="col-12">
+               <ul>
+                 <li tal:repeat="oeffnung context/oeffnungszeiten" tal:content="oeffnung"/>
+               </ul>
+             </div>
+           </div>
 
-  <script>
-    function myFunction() {
-      var copyText = document.getElementById("anschrift");
-      copyText.select();
-      document.execCommand("copy");
-      alert("Anschrift: " + copyText.value);
-    }
-    function copyFunction() {
-      var copyText = document.getElementById("iknummer");
-      copyText.select();
-      document.execCommand("copy");
-      alert("IK-Nummer: " + copyText.value);
-    }
-  </script>
+           <h2 tal:condition="context/ansprechpartner">Ansprechpartner beim Netzwerkpartner</h2>
+           <div tal:condition="context/ansprechpartner" class="row mb-4">
+             <div class="col-12">
+               <ul>
+                 <li tal:repeat="person context/ansprechpartner" tal:content="person"/>
+               </ul>
+             </div>
+           </div>
 
-</div>
+           <h2 tal:condition="context/bghwansprechpartner">BGHW-Ansprechpartner</h2>
+           <div tal:condition="context/bghwansprechpartner" class="row mb-4">
+             <div class="col-12">
+               <ul>
+                 <li tal:repeat="person context/bghwansprechpartner" tal:content="person"/>
+               </ul>
+             </div>
+           </div>
+
+           <h2 tal:condition="context/zusatzinfos">Zusatzinformationen</h2>
+           <div tal:condition="context/zusatzinfos" class="row mb-4">
+             <div class="col-12">
+               <ul>
+                 <li tal:repeat="info context/zusatzinfos" tal:content="info"/>
+               </ul>
+             </div>
+           </div>
+
+          <h2 tal:condition="context/bemerkungen">Bemerkungen</h2>
+          <div tal:condition="context/bemerkungen" class="row">
+            <div class="col-12">
+              <span tal:replace="structure context/bemerkungen/output"/>
+            </div>
+          </div>
+
+        </div> <!-- content col -->
+
+        <!-- Portlets -->
+        <div class="col-lg-3 col-12">
+          <div tal:replace="structure context/@@portlet-cards-view"/>
+        </div>
+        <!-- Ende Portlets -->
+
+      </div> <!-- row -->
+
+
+      <div class="row">
+        <span class="col-lg-9 col-12" tal:content="structure provider:plone.belowcontentbody" />
+      </div>
+
+
+      <script>
+        function myFunction() {
+          var copyText = document.getElementById("anschrift");
+          copyText.select();
+          document.execCommand("copy");
+          alert("Anschrift: " + copyText.value);
+        }
+        function copyFunction() {
+          var copyText = document.getElementById("iknummer");
+          copyText.select();
+          document.execCommand("copy");
+          alert("IK-Nummer: " + copyText.value);
+        }
+      </script>
+    </div>  
+     
+
+    </tal:main-macro>
+</metal:main>
+
+</body>
+</html>
