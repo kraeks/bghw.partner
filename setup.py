@@ -14,7 +14,7 @@ long_description = '\n\n'.join([
 
 setup(
     name='bghw.partner',
-    version='2.1.dev0',
+    version='2.1',
     description="Datenbank der BGHW-Netzwerkpartner",
     long_description=long_description,
     # Get more from https://pypi.python.org/pypi?%3Aaction=list_classifiers

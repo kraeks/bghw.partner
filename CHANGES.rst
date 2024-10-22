@@ -2,10 +2,10 @@ Changelog
 =========
 
 
-2.1 (unreleased)
+2.1 (2024-10-22)
 ----------------
 
-- Nothing changed yet.
+- Bugfix [lwalther@novareto.de]
 
 
 2.0 (2024-10-22)
