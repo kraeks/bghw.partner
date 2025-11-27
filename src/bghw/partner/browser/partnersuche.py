@@ -71,7 +71,8 @@ class PartnerSearch(AutoExtensibleForm, form.EditForm):
         data, errors = self.extractData()
         if errors:
             return
-        brains = ploneapi.content.find(path='/inwiportal/inwi-rul/sonstige-dateien/netzwerkpartner', portal_typ='Partner', art=data.get('art'))
+        pfad = '/'.join(self.context.getPhysicalPath())
+        brains = ploneapi.content.find(path=pfad, portal_typ='Partner', art=data.get('art'))
         self.partners = []
         adresse = "%s, Deutschland" % data.get('plz')
         if data.get('strhnr'):
@@ -182,10 +183,11 @@ class PartnerWordSearch(AutoExtensibleForm, form.EditForm):
         data, errors = self.extractData()
         if errors:
             return
+        pfad = '/'.join(self.context.getPhysicalPath())
         if not data.get('art'):
-            brains = ploneapi.content.find(portal_typ='Partner', partnersuche=data.get('begriff') + "*")
+            brains = ploneapi.content.find(path=pfad, portal_typ='Partner', partnersuche=data.get('begriff') + "*")
         else:
-            brains = ploneapi.content.find(portal_typ='Partner', partnersuche=data.get('begriff') + "*", art=data.get('art'))
+            brains = ploneapi.content.find(path=pfad, portal_typ='Partner', partnersuche=data.get('begriff') + "*", art=data.get('art'))
         self.partners = []
         for i in brains:
             entry = {}
