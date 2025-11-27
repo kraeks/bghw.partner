@@ -2,11 +2,12 @@ Changelog
 =========
 
 
-2.2 (unreleased)
+2.2 (2025-11-27)
 ----------------
 
-- Nothing changed yet.
-
+- Umbenennungen von Titeln für Nutzung durch alle Mandanten, Setzen der Default-Views auf den Ordner
+- allgemeine Nutzung der Partnersuche, flexible Suchpfade
+- Ansicht Netzwerkpartnersuche wird mit dem Setup-Prozess für Ordner installiert
 
 2.1 (2024-10-22)
 ----------------
