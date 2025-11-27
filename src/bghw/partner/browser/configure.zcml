@@ -46,4 +46,14 @@
     permission="zope2.View"
     />
 
+  <browser:menuItems
+     for="*"
+     menu="plone_displayviews">
+     <browser:menuItem
+       title="Netzwerkpartner Suche"
+       action="partnersearch"
+       description="Netzwerkpartner Suche"
+     />
+  </browser:menuItems>
+
 </configure>

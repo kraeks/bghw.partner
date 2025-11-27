@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from Products.CMFPlone.interfaces import INonInstallable
 from zope.interface import implementer
-
+from Products.CMFCore.utils import getToolByName
 
 @implementer(INonInstallable)
 class HiddenProfiles(object):
@@ -15,8 +15,12 @@ class HiddenProfiles(object):
 
 def post_install(context):
     """Post install script"""
-    # Do something at the end of the installation of this package.
-
+    typesTool = getToolByName(context, 'portal_types')
+    typefolder = typesTool['Folder']
+    viewlist = typefolder.getProperty('view_methods', d=None)
+    if 'partnersearch' not in viewlist:
+        viewlist = viewlist + ('partnersearch',)
+    typefolder.manage_changeProperties(view_methods = viewlist)
 
 def uninstall(context):
     """Uninstall script"""
