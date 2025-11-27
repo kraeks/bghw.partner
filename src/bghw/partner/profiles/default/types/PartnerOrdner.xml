@@ -47,11 +47,21 @@
 
   <!-- View information -->
   <property name="add_view_expr">string:${folder_url}/++add++PartnerOrdner</property>
-  <property name="immediate_view">view</property>
-  <property name="default_view">view</property>
+  <property name="immediate_view">enhanced_tableview</property>
+  <property name="default_view">enhanced_tableview</property>
   <property name="default_view_fallback">False</property>
   <property name="view_methods">
-    <element value="view" />
+     <element value="listing_view" />
+     <element value="summary_view" />
+     <element value="tabular_view" />
+     <element value="enhanced_foldersummary" />
+     <element value="enhanced_folderlist" />
+     <element value="enhanced_foldertext" />
+     <element value="enhanced_cardview" />
+     <element value="akkordeon_view" />
+     <element value="abc-title" />
+     <element value="abc-title-table" />
+     <element value="enhanced_tableview" />
   </property>
 
   <!-- Method aliases -->

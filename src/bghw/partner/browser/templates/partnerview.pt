@@ -74,7 +74,7 @@
              </div>
            </div>
 
-           <h2 tal:condition="context/bghwansprechpartner">BGHW-Ansprechpartner</h2>
+           <h2 tal:condition="context/bghwansprechpartner">UVT-Ansprechpartner</h2>
            <div tal:condition="context/bghwansprechpartner" class="row mb-4">
              <div class="col-12">
                <ul>

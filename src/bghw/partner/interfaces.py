@@ -86,7 +86,7 @@ standorte = SimpleVocabulary((
 spezialgebiete = SimpleVocabulary((
     SimpleTerm(u'', u'', u'Auswahl'),
     SimpleTerm(u'assessmentverfahren', u'assessmentverfahren', u'Assessmentverfahren zur Teilhabe am Arbeitsleben'),
-    SimpleTerm(u'beraterbghw', u'beraterbghw', u'ärztliche Berater/innen der BGHW'),
+    SimpleTerm(u'beraterbghw', u'beraterbghw', u'ärztliche Berater/innen des UVT'),
     SimpleTerm(u'berufsfindung', u'berufsfindung', u'Eignungsuntersuchung, Berufsfindung und Arbeitserprobung'),
     SimpleTerm(u'handkompetenzzentrum', u'handkompetenzzentrum', u'Hand-Kompetenzzentrum'),
     SimpleTerm(u'heilverfahrenskontrollen', u'heilverfahrenskontrollen', u'Ärzte und Kliniken für Heilverfahrenskontrollen'),
@@ -278,7 +278,7 @@ class IPartner(Interface):
     )
 
     bghwansprechpartner = schema.List(
-        title=_(u'BGHW Ansprechpartner'),
+        title=_(u'UVT Ansprechpartner'),
         description=u'Bitte nur einen Namen pro Zeile eintragen',
         value_type = schema.TextLine(),
         required=False,
